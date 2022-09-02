@@ -19,7 +19,7 @@
             <div>
                 <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                 <Component
-                    :key="link.url"
+                    :key="link.label"
                     :is="link.url ? Link : 'span'"
                     v-for="link in links"
                     :href="link.url"
