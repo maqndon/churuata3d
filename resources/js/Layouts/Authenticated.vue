@@ -1,15 +1,3 @@
-<script setup>
-import { ref } from 'vue';
-import BreezeApplicationLogo from '@/Components/ApplicationLogo.vue';
-import BreezeDropdown from '@/Components/Dropdown.vue';
-import BreezeDropdownLink from '@/Components/DropdownLink.vue';
-import BreezeNavLink from '@/Components/NavLink.vue';
-import BreezeResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/inertia-vue3';
-
-const showingNavigationDropdown = ref(false);
-</script>
-
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
@@ -29,6 +17,9 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <BreezeNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
+                                </BreezeNavLink>
+                                <BreezeNavLink :href="route('users.index')" :active="route().current('users.index')">
+                                    Users
                                 </BreezeNavLink>
                             </div>
                         </div>
@@ -108,3 +99,15 @@ const showingNavigationDropdown = ref(false);
         </div>
     </div>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+import BreezeApplicationLogo from '@/Components/ApplicationLogo.vue';
+import BreezeDropdown from '@/Components/Dropdown.vue';
+import BreezeDropdownLink from '@/Components/DropdownLink.vue';
+import BreezeNavLink from '@/Components/NavLink.vue';
+import BreezeResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import { Link } from '@inertiajs/inertia-vue3';
+
+const showingNavigationDropdown = ref(false);
+</script>
