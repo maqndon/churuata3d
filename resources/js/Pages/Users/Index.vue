@@ -10,7 +10,7 @@
                         <h1 class="text-gray-600 text-2xl">Users</h1>
                         <!-- Search -->
                         <div class="mt-4 mb-6">
-                            <SearchInput></SearchInput>
+                            <SearchInput v-model="actualQuery"/>
                         </div>
                         <div class="rounded-md shadow overflow-x-auto shadow-lg">
                             <table class="min-w-full divide-y border-b bg-white">
@@ -58,11 +58,9 @@ import SearchInput from '@/Shared/SearchInput.vue'
 import Pagination from '@/Shared/Pagination.vue'
 import { Head } from '@inertiajs/inertia-vue3'
 import {Inertia} from "@inertiajs/inertia"
-// import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-
 
 defineProps({
     users: Object,
+    actualQuery: String,
 })
-
 </script>

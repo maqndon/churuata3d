@@ -16,21 +16,19 @@ class UserController extends Controller
     public function index(Request $request)
     {
         //search query
-        $q = $request->get('search');
+        $actualQuery = $request->get('search');
 
         return Inertia::render('Users/Index', [
             'users' => User::query()
                 ->join('roles', 'role_id', '=', 'roles.id')
                 ->select('users.name', 'users.email', 'roles.name as role')
-                ->when($q, function ($query, $search){
+                ->when($actualQuery, function ($query, $search){
                     $query->where('users.name', 'like', "%{$search}%");
                 })
                 ->paginate(10)
                 ->withQueryString(),
-
-            'actualQuery' => $q
+            'actualQuery' => $actualQuery
             ]);
-        ;
     }
 
     /**
