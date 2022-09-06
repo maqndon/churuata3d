@@ -27,7 +27,7 @@ class UserController extends Controller
                 })
                 ->paginate(10)
                 ->withQueryString(),
-            'actualQuery' => $actualQuery
+            'query' => [ 'filters' => $actualQuery , 'table' => 'users']
             ]);
     }
 

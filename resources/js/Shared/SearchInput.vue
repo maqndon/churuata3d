@@ -13,14 +13,15 @@
     import debounce from "lodash/debounce"
 
     const props = defineProps({
-        modelValue: String,
+        modelValue: Object,
     })
     
-    let search = ref(props.modelValue)
+    let search = ref(props.modelValue.filters)
     
     watch(search, debounce(function (value) {
-        Inertia.get('users', { search: value }, {
-            preserveState: true
+        Inertia.get(props.modelValue.table, { search: value }, {
+            preserveState: true,
+            replace: true
         })
     }, 300)) 
 

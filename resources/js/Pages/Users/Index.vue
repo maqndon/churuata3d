@@ -10,7 +10,7 @@
                         <h1 class="text-gray-600 text-2xl">Users</h1>
                         <!-- Search -->
                         <div class="mt-4 mb-6">
-                            <SearchInput v-model="actualQuery"/>
+                            <SearchInput v-model="query"/>
                         </div>
                         <div class="rounded-md shadow overflow-x-auto shadow-lg">
                             <table class="min-w-full divide-y border-b bg-white">
@@ -61,6 +61,6 @@ import {Inertia} from "@inertiajs/inertia"
 
 defineProps({
     users: Object,
-    actualQuery: String,
+    query: Object,
 })
 </script>
