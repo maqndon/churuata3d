@@ -57,7 +57,6 @@ import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
 import SearchInput from '@/Shared/SearchInput.vue'
 import Pagination from '@/Shared/Pagination.vue'
 import { Head } from '@inertiajs/inertia-vue3'
-import {Inertia} from "@inertiajs/inertia"
 
 defineProps({
     users: Object,
