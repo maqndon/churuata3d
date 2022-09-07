@@ -28,17 +28,24 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-                                    <tr v-for="user in users.data" :key="user.id">
-                                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                    <tr v-for="user in users.data" :key="user.id" class="py-4 hover:bg-gray-100 focus-within:bg-gray-100">
+                                        <td v-if="user.email!=$page.props.auth.user.email" class="whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                            <Link class="flex items-center px-6 py-4" :href="route('users.edit', user.id)" tabindex="-1">
                                             {{ user.name }}
+                                            </Link>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                        <td v-if="user.email!=$page.props.auth.user.email" class="whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                            <Link class="flex items-center px-6 py-4" :href="route('users.edit', user.id)" tabindex="-1">
                                             {{ user.email }}
+                                            </Link>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                        <td v-if="user.email!=$page.props.auth.user.email" class="whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                            <Link class="flex items-center px-6 py-4" :href="route('users.edit', user.id)" tabindex="-1">
                                             {{ user.role }}
+                                            </Link>
                                         </td>
                                     </tr>
+
                                 </tbody>
                             </table>
                         </div>
@@ -56,7 +63,7 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
 import SearchInput from '@/Shared/SearchInput.vue'
 import Pagination from '@/Shared/Pagination.vue'
-import { Head } from '@inertiajs/inertia-vue3'
+import { Head, Link } from '@inertiajs/inertia-vue3'
 
 defineProps({
     users: Object,
