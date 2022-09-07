@@ -21,7 +21,7 @@ class UserController extends Controller
         return Inertia::render('Users/Index', [
             'users' => User::query()
                 ->join('roles', 'role_id', '=', 'roles.id')
-                ->select('users.name', 'users.email', 'roles.name as role')
+                ->select('users.id', 'users.name', 'users.email', 'roles.name as role')
                 ->when($actualQuery, function ($query, $search){
                     $query->where('users.name', 'like', "%{$search}%");
                 })
@@ -69,9 +69,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        //
+        // $id = $user->id;
+        return Inertia::render('users.edit', ['user' => $user]);
+        // return Inertia::render("users/{$user}/Edit");
     }
 
     /**
