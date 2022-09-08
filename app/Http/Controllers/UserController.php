@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request;
 
 class UserController extends Controller
 {
@@ -13,21 +13,21 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         //search query
-        $actualQuery = $request->get('search');
+        $actualQuery = Request::only('search');
 
         return Inertia::render('Users/Index', [
             'users' => User::query()
                 ->join('roles', 'role_id', '=', 'roles.id')
                 ->select('users.id', 'users.name', 'users.email', 'roles.name as role')
-                ->when($actualQuery, function ($query, $search){
+                ->when($actualQuery['search'], function ($query, $search){
                     $query->where('users.name', 'like', "%{$search}%");
                 })
                 ->paginate(10)
                 ->withQueryString(),
-            'query' => [ 'filters' => $actualQuery , 'table' => 'users']
+            'query' => [ 'filters' => $actualQuery['search'] , 'table' => 'users']
             ]);
     }
 
