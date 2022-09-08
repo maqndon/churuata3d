@@ -45,12 +45,14 @@
                                             </Link>
                                         </td>
                                     </tr>
-
+                                    <tr v-if="!users.data.length">
+                                        <p class="px-6 py-5 whitespace-no-wrap text-sm leading-5 text-gray-900">No results for the search criteria entered</p>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                         <!-- pagination -->
-                        <Pagination :links="users.links" :from_link_number="users.from" :to_link_number="users.to" :total_links="users.total"/>
+                        <Pagination v-if="users.data.length" :links="users.links" :from_link_number="users.from" :to_link_number="users.to" :total_links="users.total"/>
                         <!-- end pagination -->
                     </div>
                 </div>
