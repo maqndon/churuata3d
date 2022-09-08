@@ -26,7 +26,6 @@ Route::get('/', function () {
     ]);
 });
 
-
 Route::group((['middleware'=>'auth', 'middleware'=>'verified']),function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
