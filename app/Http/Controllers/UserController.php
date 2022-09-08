@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         //search query
-        $actualQuery = Request::only('search');
+        $actualQuery = Request::all('search');
 
         return Inertia::render('Users/Index', [
             'users' => User::query()
