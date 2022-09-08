@@ -15,7 +15,7 @@
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
             <div class="relative items-top justify-center sm:items-center sm:pt-0">
                 <h1 class="flex justify-center text-gray-700">Single Page</h1>
-                <h1 class="text-2xl text-gray-700">Admin Panel</h1>
+                <h1 class="text-2xl text-gray-700">CRM</h1>
             </div>
         </div>
     </div>
