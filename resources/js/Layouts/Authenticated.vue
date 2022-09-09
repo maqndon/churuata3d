@@ -67,6 +67,9 @@
                         <BreezeResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
                         </BreezeResponsiveNavLink>
+                        <BreezeResponsiveNavLink :href="route('users.index')" :active="route().current('users.index')">
+                            Users
+                        </BreezeResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
