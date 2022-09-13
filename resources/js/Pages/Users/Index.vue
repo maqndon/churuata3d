@@ -62,13 +62,13 @@
 </template>
 
 <script setup>
-import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
-import SearchInput from '@/Shared/SearchInput.vue'
-import Pagination from '@/Shared/Pagination.vue'
-import { Head, Link } from '@inertiajs/inertia-vue3'
+    import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
+    import SearchInput from '@/Shared/SearchInput.vue'
+    import Pagination from '@/Shared/Pagination.vue'
+    import { Head, Link } from '@inertiajs/inertia-vue3'
 
-defineProps({
-    users: Object,
-    query: Object,
-})
+    defineProps({
+        users: Object,
+        query: Object,
+    })
 </script>
