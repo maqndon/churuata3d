@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\UserController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,11 +27,13 @@ Route::get('/', function () {
     ]);
 });
 
-Route::group((['middleware'=>'auth', 'middleware'=>'verified']),function () {
+Route::group((['middleware' => 'auth', 'middleware' => 'verified']), function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->name('dashboard');
+        ->name('dashboard');
 
     Route::resource('users', UserController::class);
+
+    Route::resource('roles', RoleController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
