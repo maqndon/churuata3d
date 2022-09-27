@@ -97,22 +97,21 @@ class UserController extends Controller
      */
     public function update(User $user)
     {
+        // $user->first_name = Request::json('first_name');
+        // $user->last_name = Request::json('last_name');
         $user->name = Request::json('username');
         $user->email = Request::json('email');
         $user->role_id = Request::json('role');
 
+        Request::validate([
+                'username' => ['required', 'max:50'],
+                'email' => ['required', 'max:50', 'email'],
+                'role' => ['required', 'max:2']
+        ]);
+
         $user->update();
 
-        // return redirect()->route('Users/Index', $user)->with('status', 'The user was successfully updated');
-        return Redirect::route('users.edit', $user, 302, ['The user was successfully updated']);
-
-        // $user->update(
-        // Request::validate([
-        //         $user->name => ['required', 'max:50'],
-        //         $user->email => ['required', 'max:50', 'email'],
-        //         $user->role_id => ['required', 'max:2']
-        //     ])
-        // );
+        return redirect()->route('users.edit', $user)->with('message', 'The user was successfully updated');
 
     }
 
