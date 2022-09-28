@@ -26,9 +26,9 @@ class StoreUserRequest extends FormRequest
         return [
             'first_name' => 'nullable',
             'last_name' => 'nullable',
-            'name' => 'required',
+            'username' => 'required',
             'email' => 'required|email|unique:users,email',
-            'role_id' => 'required|numeric|exists:roles,id',
+            'role' => 'required|numeric|exists:roles,id',
         ];
     }
 }

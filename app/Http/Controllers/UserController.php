@@ -7,6 +7,8 @@ use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\Users\StoreUserRequest;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
@@ -23,9 +25,11 @@ class UserController extends Controller
         return Inertia::render('Users/Index', [
             'users' => User::query()
                 ->join('roles', 'role_id', '=', 'roles.id')
-                ->select('users.id', 'users.name', 'users.email', 'roles.name as role')
+                ->select('users.first_name', 'users.last_name', 'users.id', 'users.username', 'users.email', 'roles.name as role')
                 ->when($actualQuery['search'], function ($query, $search) {
-                    $query->where('users.name', 'like', "%{$search}%");
+                    $query->where('users.first_name', 'like', "%{$search}%")
+                        ->orWhere('users.last_name', 'like', "%{$search}%")
+                        ->orWhere('users.username', 'like', "%{$search}%");
                 })
                 ->paginate(10)
                 ->withQueryString(),
@@ -43,7 +47,15 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $data = [
+            'roles' => Role::all(),
+            'table' => 'roles',
+        ];
+
+        // $user = new UserResource($user);
+        return Inertia::render('Users/Create', [
+            'data' => $data
+        ]);
     }
 
     /**
@@ -52,9 +64,13 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request, UserService $userService)
     {
-        //
+
+        $user = $userService->createUser($request);
+
+        return redirect()->route('users.store', $user)
+            ->with('message', 'The user was successfully created');
     }
 
     /**
@@ -82,7 +98,6 @@ class UserController extends Controller
             'table' => 'roles',
         ];
 
-        // $user = new UserResource($user);
         return Inertia::render('Users/Edit', [
             'data' => $data
         ]);
@@ -97,9 +112,9 @@ class UserController extends Controller
      */
     public function update(User $user)
     {
-        // $user->first_name = Request::json('first_name');
-        // $user->last_name = Request::json('last_name');
-        $user->name = Request::json('username');
+        $user->first_name = Request::json('first_name');
+        $user->last_name = Request::json('last_name');
+        $user->username = Request::json('username');
         $user->email = Request::json('email');
         $user->role_id = Request::json('role');
 
