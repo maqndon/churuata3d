@@ -24,8 +24,8 @@ class StoreUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'nullable',
-            'last_name' => 'nullable',
+            'first_name' => 'required',
+            'last_name' => 'required',
             'username' => 'required',
             'email' => 'required|email|unique:users,email',
             'role' => 'required|numeric|exists:roles,id',

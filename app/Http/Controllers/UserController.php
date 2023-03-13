@@ -119,6 +119,8 @@ class UserController extends Controller
         $user->role_id = Request::json('role');
 
         Request::validate([
+                'first_name' => ['required', 'max:50'],
+                'last_name' => ['required', 'max:50'],
                 'username' => ['required', 'max:50'],
                 'email' => ['required', 'max:50', 'email'],
                 'role' => ['required', 'max:2']
