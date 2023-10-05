@@ -11,7 +11,7 @@ class Licence extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'link', 'icon', 'logo'];
+    protected $fillable = ['name', 'short_description', 'description', 'link', 'icon', 'logo'];
 
     public function products(): HasMany
     {

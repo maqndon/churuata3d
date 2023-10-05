@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('licences', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('short_description');
             $table->string('description');
             $table->string('link');
             $table->string('icon');
