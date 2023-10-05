@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_tags', function (Blueprint $table) {
+        Schema::create('product_physical_attributes', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreignId('tag_id')->references('id')->on('tags')->onDelete('cascade');
+            $table->float('weight');
+            $table->float('length');
+            $table->float('width');
+            $table->float('height');
+            $table->timestamps();
         });
     }
 
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_tags');
+        Schema::dropIfExists('product_physical_attributes');
     }
 };

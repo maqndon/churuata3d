@@ -14,10 +14,20 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'body', 'excerpt', 'slug', 'categories', 'tags', 'seo_title', 'meta_description', 'meta_keywords', 'image', 'image_gallery', 'status', 'files', 'price', 'sale_price', 'downloadable'];
+    protected $fillable = ['title', 'body', 'excerpt', 'slug', 'categories', 'tags', 'seo_title', 'meta_description', 'meta_keywords', 'image', 'image_gallery', 'status', 'files', 'price', 'sale_price', 'downloadable', 'downloads'];
 
     protected $guarded = ['creator_id'];
 
+    public function getDownloadCountAttribute()
+    {
+        return $this->downloads;
+    }
+
+    public function getImageBrowseAttribute()
+    {
+        return $this->image ?? 'no_image.svg';
+    }
+    
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'product_categories');
@@ -28,19 +38,9 @@ class Product extends Model
         return $this->belongsToMany(Tag::class, 'product_tags');
     }
 
-    public function getImageBrowseAttribute()
-    {
-        return $this->image ?? 'no_image.svg';
-    }
-
     public function sales(): HasMany
     {
         return $this->hasMany(Sale::class);
-    }
-
-    public function product_downloads(): HasOne
-    {
-        return $this->hasOne(ProductDownload::class);
     }
 
     public function print_settings(): BelongsToMany
