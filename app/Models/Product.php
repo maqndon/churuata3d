@@ -33,9 +33,9 @@ class Product extends Model
         return $this->image ?? 'no_image.svg';
     }
 
-    public function sales(): HasOne
+    public function sales(): HasMany
     {
-        return $this->hasOne(Sale::class);
+        return $this->hasMany(Sale::class);
     }
 
     public function product_downloads(): HasOne

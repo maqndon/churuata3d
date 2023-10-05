@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
-use App\Models\Product;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Licence;
+use App\Models\Product;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\ProductResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ProductResource\RelationManagers;
 
 class ProductResource extends Resource
 {
@@ -30,7 +31,21 @@ class ProductResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('excerpt'),
-                Forms\Components\Textarea::make('body'),
+                Forms\Components\RichEditor::make('body'),
+                Forms\Components\Select::make('licence_id')
+                    ->label('Licence')
+                    ->options(Licence::all()->pluck('short_description', 'id'))
+                    ->searchable(),
+                Forms\Components\TextInput::make('stock')
+                    ->numeric()
+                    ->minValue(1)
+                    ->maxValue(100),
+                Forms\Components\TextInput::make('price')
+                    ->numeric(),
+                Forms\Components\TextInput::make('sale_price')
+                    ->numeric(),
+                Forms\Components\Select::make('status'),
+                
             ]);
     }
 
