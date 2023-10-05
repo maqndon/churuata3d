@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
@@ -13,12 +17,12 @@ class Product extends Model
 
     protected $guarded = ['creator_id'];
 
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'product_categories');
     }
 
-    public function tags()
+    public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'product_tags');
     }
@@ -28,47 +32,47 @@ class Product extends Model
         return $this->image ?? 'no_image.svg';
     }
 
-    public function sales()
+    public function sales(): HasOne
     {
         return $this->hasOne(Sale::class);
     }
 
-    public function product_downloads()
+    public function product_downloads(): HasOne
     {
         return $this->hasOne(ProductDownload::class);
     }
 
-    public function print_settings()
+    public function print_settings(): BelongsToMany
     {
         return $this->belongsToMany(PrintSetting::class, 'product_print_settings');
     }
 
-    public function printing_materials()
+    public function printing_materials(): BelongsToMany
     {
         return $this->belongsToMany(PrintingMaterial::class, 'product_printing_materials');
     }
 
-    public function print_supports_rafts()
+    public function print_supports_rafts(): HasOne
     {
         return $this->hasOne(PrintSupportRaft::class);
     }
 
-    public function licence()
+    public function licence(): BelongsTo
     {
         return $this->belongsTo(Licence::class);
     }
 
-    public function bill_of_materials()
+    public function bill_of_materials(): HasMany
     {
         return $this->hasMany(ProductBillOfMaterial::class);
     }
 
-    public function created_by()
+    public function created_by(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function product_seo()
+    public function product_seo(): HasOne
     {
         return $this->hasOne(ProductSeo::class);
     }
