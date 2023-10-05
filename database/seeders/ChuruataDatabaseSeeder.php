@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\PrintingMaterial;
+use App\Models\ProductCommonContent;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,6 +20,7 @@ class ChuruataDatabaseSeeder extends Seeder
             TagSeeder::class,
             PrintingMaterialSeeder::class,
             PrintSettingSeeder::class,
+            ProductCommonContentSeeder::class,
         ]);
     }
 }
