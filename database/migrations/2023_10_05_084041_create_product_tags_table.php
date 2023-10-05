@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('print_supports_rafts', function (Blueprint $table) {
+        Schema::create('product_tags', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->boolean('supports')->default(false);
-            $table->boolean('raft')->default(false);
+            $table->foreignId('tag_id')->references('id')->on('tags')->onDelete('cascade');
             $table->timestamps();
-
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('print_supports_rafts');
+        Schema::dropIfExists('product_tags');
     }
 };

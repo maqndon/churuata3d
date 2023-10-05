@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('licence_id');
+            $table->foreignId('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('licence_id')->references('id')->on('licences')->onDelete('cascade');
             $table->string('title');
             $table->string('slug')->unique();;
             $table->string('sku')->unique();;
@@ -31,9 +31,6 @@ return new class extends Migration
             $table->boolean('is_parametric')->default(false);
             $table->string('related_parametric')->nullable();
             $table->timestamps();
-
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('licence_id')->references('id')->on('licences')->onDelete('cascade');
         });
     }
 

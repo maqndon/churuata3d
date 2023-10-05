@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('author_id');
+            $table->foreignId('author_id')->references('id')->on('users');
             $table->string('title');
             $table->string('seo_title')->nullable();
             $table->text('excerpt');
@@ -22,10 +22,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('meta_description');
             $table->text('meta_keywords');
-            $table->enum('status', ['PUBLISHED', 'DRAFT', 'PENDING'])->default('DRAFT');
+            $table->enum('status', ['publisched', 'draft', 'pending'])->default('draft');
             $table->timestamps();
 
-            $table->foreign('author_id')->references('id')->on('users');
         });
     }
 

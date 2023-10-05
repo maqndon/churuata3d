@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Product extends Model
 {
@@ -72,8 +73,8 @@ class Product extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function product_seo(): HasOne
+    public function seos(): MorphMany
     {
-        return $this->hasOne(ProductSeo::class);
+        return $this->morphMany(Seo::class, 'seoable');
     }
 }

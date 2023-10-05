@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('print_supports_rafts', function (Blueprint $table) {
+        Schema::create('seos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->boolean('supports')->default(false);
-            $table->boolean('raft')->default(false);
+            $table->enum('seoable_type', ['post', 'product'])->default('product');
+            $table->unsignedBigInteger('seoable_id');
+            $table->string('title');
+            $table->string('meta_description');
             $table->timestamps();
 
+            $table->index(['seoable_type', 'seoable_id']);
         });
     }
 
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('print_supports_rafts');
+        Schema::dropIfExists('seos');
     }
 };
