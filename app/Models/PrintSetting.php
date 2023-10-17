@@ -10,7 +10,16 @@ class PrintSetting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['printing_material_id', 'print_strength', 'resolution', 'infill', 'top_layers', 'bottom_layers', 'walls', 'speed'];
+    protected $fillable = [
+        'printing_material_id',
+        'print_strength',
+        'resolution',
+        'infill',
+        'top_layers',
+        'bottom_layers',
+        'walls',
+        'speed'
+    ];
 
     public function products(): BelongsToMany
     {

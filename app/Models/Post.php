@@ -11,14 +11,19 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $cast = [
+        'tags' => 'array',
+        'categories' => 'array',
+    ];
+
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'product_categories');
+        return $this->belongsToMany(Category::class);
     }
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'product_tags');
+        return $this->belongsToMany(Tag::class);
     }
 
     public function seos(): MorphMany

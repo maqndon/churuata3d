@@ -2,9 +2,8 @@
 
 namespace App\Enums;
 
-enum PostStatusEnum: string
+enum ProductStatus: string
 {
     case PUBLISHED = 'published';
     case DRAFT = 'draft';
-    case PENDING = 'pending';
 }

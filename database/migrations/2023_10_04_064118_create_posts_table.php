@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('meta_description');
             $table->text('meta_keywords');
-            $table->enum('status', ['publisched', 'draft', 'pending'])->default('draft');
+            $table->enum('status', ['published', 'draft', 'pending'])->default('draft');
             $table->timestamps();
 
         });

@@ -23,11 +23,11 @@ return new class extends Migration
             $table->integer('stock')->nullable();
             $table->float('price')->nullable();
             $table->float('sale_price')->nullable();
-            $table->enum('status', ['PUBLISHED', 'DRAFT'])->default('DRAFT');
-            $table->string('featured')->nullable();
-            $table->boolean('virtual')->default(true);
-            $table->boolean('downloadable')->default(true);
-            $table->boolean('printable')->default(true);
+            $table->enum('status', ['published', 'draft'])->default('draft');
+            $table->string('is_featured')->nullable();
+            $table->boolean('is_virtual')->default(true);
+            $table->boolean('is_downloadable')->default(true);
+            $table->boolean('is_printable')->default(true);
             $table->boolean('is_parametric')->default(false);
             $table->string('related_parametric')->nullable();
             $table->unsignedInteger('downloads')->default(0);

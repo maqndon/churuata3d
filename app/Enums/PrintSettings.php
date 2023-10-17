@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum PostStatusEnum: string
+enum PrintSettings: string
 {
     case HOLLOW = 'hollow';
     case LOW = 'low';

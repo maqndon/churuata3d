@@ -14,9 +14,37 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'body', 'excerpt', 'slug', 'categories', 'tags', 'seo_title', 'meta_description', 'meta_keywords', 'image', 'image_gallery', 'status', 'files', 'price', 'sale_price', 'downloadable', 'downloads'];
+    protected $fillable = [
+        'title',
+        'body',
+        'excerpt',
+        'slug',
+        'categories',
+        'tags',
+        'seo_title',
+        'meta_description',
+        'meta_keywords',
+        'image',
+        'image_gallery',
+        'status',
+        'files',
+        'price',
+        'sale_price',
+        'downloadable',
+        'downloads'
+    ];
 
-    protected $guarded = ['creator_id'];
+    protected $cast = [
+        'is_featured' => 'boolean',
+        'is_virtual' => 'boolean',
+        'is_downloadable' => 'boolean',
+        'is_printable' => 'boolean',
+        'is_parametric' => 'boolean',
+        'tags' => 'array',
+        'categories' => 'array',
+    ];
+    
+    // protected $guarded = ['creator_id'];
 
     public function getDownloadCountAttribute()
     {
@@ -27,15 +55,15 @@ class Product extends Model
     {
         return $this->image ?? 'no_image.svg';
     }
-    
+
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'product_categories');
+        return $this->belongsToMany(Category::class);
     }
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'product_tags');
+        return $this->belongsToMany(Tag::class);
     }
 
     public function sales(): HasMany
@@ -45,12 +73,12 @@ class Product extends Model
 
     public function print_settings(): BelongsToMany
     {
-        return $this->belongsToMany(PrintSetting::class, 'product_print_settings');
+        return $this->belongsToMany(PrintSetting::class);
     }
 
     public function printing_materials(): BelongsToMany
     {
-        return $this->belongsToMany(PrintingMaterial::class, 'product_printing_materials');
+        return $this->belongsToMany(PrintingMaterial::class);
     }
 
     public function print_supports_rafts(): HasOne

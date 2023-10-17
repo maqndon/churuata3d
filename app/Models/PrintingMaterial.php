@@ -10,7 +10,12 @@ class PrintingMaterial extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'nozzle_size', 'min_hot_bed_temp', 'max_hot_bed_temp'];
+    protected $fillable = [
+        'name',
+        'nozzle_size',
+        'min_hot_bed_temp',
+        'max_hot_bed_temp'
+    ];
 
     public function products(): BelongsToMany
     {
