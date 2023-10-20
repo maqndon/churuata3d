@@ -2,23 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Models\Tag;
-use Filament\Forms;
 use Filament\Tables;
 use App\Models\Licence;
 use App\Models\Product;
-use App\Models\Category;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use App\Enums\ProductStatus;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,89 +42,157 @@ class ProductResource extends Resource
         return $form
             ->schema([
 
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
+                Section::make()
+                    // ->id('main')
+                    ->schema([
 
-                TextInput::make('sku')
-                    ->required()
-                    ->maxLength(255),
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->live()
+                            ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
+                                if (($get('slug') ?? '') !== Str::slug($old)) {
+                                    return;
+                                }
 
-                Textarea::make('excerpt'),
+                                $set('slug', Str::slug($state));
+                            })
+                            ->columnspan('full'),
 
-                RichEditor::make('body')
-                    ->columnSpan('full'),
+                        TextInput::make('slug')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnspan('full'),
 
-                Select::make('licence_id')
-                    ->label('Licence')
-                    ->options(Licence::all()->pluck('short_description', 'id'))
-                    ->searchable(),
+                        TextInput::make('sku')
+                            ->required()
+                            ->maxLength(255),
 
-                TextInput::make('stock')
-                    ->numeric()
-                    ->minValue(1)
-                    ->maxValue(100),
+                        Select::make('licence_id')
+                            ->label('Licence')
+                            ->options(Licence::all()->pluck('short_description', 'id'))
+                            ->searchable(),
 
-                TextInput::make('price')
-                    ->numeric(),
+                        RichEditor::make('excerpt')
+                            ->columnSpanFull(),
 
-                TextInput::make('sale_price')
-                    ->numeric(),
+                        RichEditor::make('body')
+                            ->columnSpanFull(),
 
-                Select::make('status')
-                    ->options([
-                        'published' => ProductStatus::PUBLISHED->value,
-                        'draft' => ProductStatus::DRAFT->value
+                        Repeater::make('bill_of_materials')
+                            ->schema([
+                                TextInput::make('item')
+                                    ->required()
+                                    ->live(onBlur: true),
+                            ])
+                            ->relationship('bill_of_materials')
+                            ->itemLabel(fn (array $state): ?string => $state['item'] ?? null)
+                            ->columnSpanFull()
+                            ->grid(2),
+
+                        
                     ])
-                    ->searchable()
-                    ->selectablePlaceholder(false)
-                    ->default(ProductStatus::DRAFT->value),
+                    ->columnSpan(3)
+                    ->columns(2),
 
-                Toggle::make('is_featured')
-                    ->label('Featured'),
-
-                Toggle::make('is_virtual')
-                    ->label('Virtual')
-                    ->default(true),
-
-                Toggle::make('is_downloadable')
-                    ->label('Downloadable')
-                    ->default(true),
-
-                Toggle::make('is_printable')
-                    ->label('Printable')
-                    ->default(true),
-
-                Toggle::make('is_parametric')
-                    ->label('Parametric'),
-
-                Fieldset::make('Raft and Suport')
-                    ->relationship('print_supports_rafts')
+                Section::make()
+                    // ->id('side')
                     ->schema([
-                        Toggle::make('has_supports')
-                            ->label('Supports'),
 
-                        Toggle::make('has_raft')
-                            ->label('Raft'),
-                    ]),
+                        Select::make('status')
+                            ->options([
+                                'published' => ProductStatus::PUBLISHED->value,
+                                'draft' => ProductStatus::DRAFT->value
+                            ])
+                            ->searchable()
+                            ->selectablePlaceholder(false)
+                            ->default(ProductStatus::DRAFT->value),
 
-                Select::make('related_parametric')
-                    ->options(Product::where('is_parametric')->pluck('title', 'id'))
-                    ->searchable(),
+                        // Toggle::make('status')
+                        //     ->label('Published')
+                        //     ->accepted()
+                        //     ->declined()
+                        //     ->default(ProductStatus::DRAFT->value),
 
-                Fieldset::make('Tags')
-                    ->relationship('tags')
-                    ->schema([
-                        TagsInput::make('tags')
-                        // ->suggestions(Tag::all()->pluck('name', 'id')),
-                    ]),
+                        Toggle::make('is_featured')
+                            ->label('Featured'),
 
-                Select::make('categories')
-                    ->label('Categories')
-                    ->multiple()
-                    ->relationship(name: 'categories', titleAttribute: 'name')
-                    ->searchable(),
-            ]);
+                        Toggle::make('is_virtual')
+                            ->label('Virtual')
+                            ->default(true),
+
+                        Toggle::make('is_downloadable')
+                            ->label('Downloadable')
+                            ->default(true),
+
+                        Toggle::make('is_printable')
+                            ->label('Printable')
+                            ->default(true),
+
+                        Group::make()
+                            ->relationship('print_supports_rafts')
+                            ->schema([
+                                Toggle::make('has_supports')
+                                    ->label('Supports'),
+
+                                Toggle::make('has_raft')
+                                    ->label('Raft'),
+                            ]),
+
+                        Toggle::make('is_parametric')
+                            ->label('Parametric')
+                            ->live(),
+
+                        Select::make('related_parametric')
+                            ->options(Product::where('is_parametric')->pluck('title', 'id'))
+                            ->hidden(fn (Get $get) => $get('is_parametric') !== false)
+                            ->searchable(),
+
+                        TextInput::make('stock')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(100),
+
+                        TextInput::make('price')
+                            ->numeric(),
+
+                        TextInput::make('sale_price')
+                            ->numeric(),
+
+                        Select::make('tags')
+                            ->label('Tags')
+                            ->multiple()
+                            ->relationship(name: 'tags', titleAttribute: 'name')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                    ->required(),
+                                TextInput::make('slug')
+                                    ->required()
+                            ])
+                            ->searchable()
+                            ->preload(),
+
+                        Select::make('categories')
+                            ->label('Categories')
+                            ->multiple()
+                            ->relationship(name: 'categories', titleAttribute: 'name')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                    ->required(),
+                                TextInput::make('slug')
+                                    ->required()
+                            ])
+                            ->searchable()
+                            ->preload(),
+                        ])
+                        // ->extraAttributes(['style' => 'width: 25%'])
+                        ->columnSpan(1),
+
+            ])->columns(4);
     }
 
     public static function table(Table $table): Table
@@ -142,6 +210,7 @@ class ProductResource extends Resource
                     ->money('EUR'),
 
                 TextColumn::make('stock'),
+
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -187,6 +256,12 @@ class ProductResource extends Resource
                 TextColumn::make('related_parametric'),
 
                 TextColumn::make('downloads'),
+
+                TextColumn::make('categories.name')
+                    ->badge(),
+
+                TextColumn::make('tags.name')
+                    ->badge(),
             ])
             ->filters([
                 //
