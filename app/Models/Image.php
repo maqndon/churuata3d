@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Seo extends Model
+class Image extends Model
 {
     use HasFactory;
 
-    public function seoable(): MorphTo
+    public function imageable(): MorphTo
     {
         return $this->morphTo();
     }

@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -19,33 +21,39 @@ class Product extends Model
         'body',
         'excerpt',
         'slug',
-        'categories',
-        'tags',
-        'seo_title',
-        'meta_description',
-        'meta_keywords',
-        'image',
-        'image_gallery',
+        'sku',
+        'stock',
+        'licence_id',
         'status',
-        'files',
         'price',
         'sale_price',
-        'downloadable',
+        'is_featured',
+        'is_downloadable',
+        'is_printable',
+        'is_parametric',
+        'related_parametric',
         'downloads'
     ];
 
     protected $cast = [
         'is_featured' => 'boolean',
-        'is_virtual' => 'boolean',
         'is_downloadable' => 'boolean',
         'is_printable' => 'boolean',
         'is_parametric' => 'boolean',
         'tags' => 'array',
         'categories' => 'array',
+        'seos' => 'array',
+        'images' => 'array',
+        'files' => 'array',
     ];
-    
-    // protected $guarded = ['creator_id'];
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->attributes['created_by'] = auth()->id();
+    }
+    
     public function getDownloadCountAttribute()
     {
         return $this->downloads;
@@ -104,5 +112,15 @@ class Product extends Model
     public function seos(): MorphMany
     {
         return $this->morphMany(Seo::class, 'seoable');
+    }
+
+    public function images(): MorphMany
+    {
+        return $this->MorphMany(Seo::class, 'imageable');
+    }
+
+    public function files(): MorphMany
+    {
+        return $this->morphMany(Seo::class, 'fileable');
     }
 }

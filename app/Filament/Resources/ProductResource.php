@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\Enums\ProductStatus;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
@@ -20,6 +21,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ProductResource\Pages;
@@ -39,11 +41,13 @@ class ProductResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // dd(Auth::id());
+        // dd($form->model);
+        // $form->model->created_by = Auth::id();
         return $form
             ->schema([
 
                 Section::make()
-                    // ->id('main')
                     ->schema([
 
                         TextInput::make('title')
@@ -70,13 +74,18 @@ class ProductResource extends Resource
 
                         Select::make('licence_id')
                             ->label('Licence')
+                            ->required()
                             ->options(Licence::all()->pluck('short_description', 'id'))
+                            // ->relationship('licence','short_description')
+                            // ->preload()
                             ->searchable(),
 
                         RichEditor::make('excerpt')
+                            ->required()
                             ->columnSpanFull(),
 
                         RichEditor::make('body')
+                            ->required()
                             ->columnSpanFull(),
 
                         Repeater::make('bill_of_materials')
@@ -89,14 +98,11 @@ class ProductResource extends Resource
                             ->itemLabel(fn (array $state): ?string => $state['item'] ?? null)
                             ->columnSpanFull()
                             ->grid(2),
-
-                        
                     ])
                     ->columnSpan(3)
                     ->columns(2),
 
                 Section::make()
-                    // ->id('side')
                     ->schema([
 
                         Select::make('status')
@@ -106,20 +112,12 @@ class ProductResource extends Resource
                             ])
                             ->searchable()
                             ->selectablePlaceholder(false)
-                            ->default(ProductStatus::DRAFT->value),
-
-                        // Toggle::make('status')
-                        //     ->label('Published')
-                        //     ->accepted()
-                        //     ->declined()
-                        //     ->default(ProductStatus::DRAFT->value),
+                            ->default(ProductStatus::DRAFT->value)
+                            ->live(),
 
                         Toggle::make('is_featured')
-                            ->label('Featured'),
-
-                        Toggle::make('is_virtual')
-                            ->label('Virtual')
-                            ->default(true),
+                            ->label('Featured')
+                            ->default(false),
 
                         Toggle::make('is_downloadable')
                             ->label('Downloadable')
@@ -127,26 +125,44 @@ class ProductResource extends Resource
 
                         Toggle::make('is_printable')
                             ->label('Printable')
-                            ->default(true),
+                            ->default(true)
+                            ->live(),
 
                         Group::make()
                             ->relationship('print_supports_rafts')
                             ->schema([
                                 Toggle::make('has_supports')
-                                    ->label('Supports'),
+                                    ->label('Supports')
+                                    ->default(false),
 
                                 Toggle::make('has_raft')
-                                    ->label('Raft'),
-                            ]),
+                                    ->label('Raft')
+                                    ->default(false),
+                            ])
+                            ->hidden(fn (Get $get) => $get('is_printable') !== true)
+                            ->disabled(fn (Get $get) => $get('is_printable') !== true),
 
                         Toggle::make('is_parametric')
                             ->label('Parametric')
                             ->live(),
 
                         Select::make('related_parametric')
-                            ->options(Product::where('is_parametric')->pluck('title', 'id'))
-                            ->hidden(fn (Get $get) => $get('is_parametric') !== false)
-                            ->searchable(),
+                            ->options($products = Product::where('status', 'published')->where('is_parametric', 1)->pluck('title', 'id'))
+                            ->hidden(fn (Get $get): bool => $get('is_parametric'))
+                            ->disabled(fn (Get $get): bool => $get('is_parametric') || $products->isEmpty())
+                            ->searchable()
+                            ->preload(),
+
+                        // FileUpload::make('files')
+                        //     ->preserveFilenames()
+                        //     // ->relatedTo('files')
+                        //     ->multiple(),
+
+                        // FileUpload::make('images')
+                        // ->image()
+                        // ->reorderable()
+                        // ->relatedTo('images')
+                        // ->imageEditor(),
 
                         TextInput::make('stock')
                             ->numeric()
@@ -158,21 +174,6 @@ class ProductResource extends Resource
 
                         TextInput::make('sale_price')
                             ->numeric(),
-
-                        Select::make('tags')
-                            ->label('Tags')
-                            ->multiple()
-                            ->relationship(name: 'tags', titleAttribute: 'name')
-                            ->createOptionForm([
-                                TextInput::make('name')
-                                    ->live()
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                                    ->required(),
-                                TextInput::make('slug')
-                                    ->required()
-                            ])
-                            ->searchable()
-                            ->preload(),
 
                         Select::make('categories')
                             ->label('Categories')
@@ -188,9 +189,24 @@ class ProductResource extends Resource
                             ])
                             ->searchable()
                             ->preload(),
-                        ])
-                        // ->extraAttributes(['style' => 'width: 25%'])
-                        ->columnSpan(1),
+
+                        Select::make('tags')
+                            ->label('Tags')
+                            ->multiple()
+                            ->relationship(name: 'tags', titleAttribute: 'name')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                    ->required(),
+                                TextInput::make('slug')
+                                    ->required()
+                            ])
+                            ->searchable()
+                            ->preload(),
+                    ])
+                    // ->extraAttributes(['style' => 'width: 25%'])
+                    ->columnSpan(1),
 
             ])->columns(4);
     }
@@ -199,9 +215,11 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title'),
+                TextColumn::make('title')
+                    ->limit(40),
 
-                TextColumn::make('slug'),
+                TextColumn::make('slug')
+                    ->limit(40),
 
                 TextColumn::make('price')
                     ->money('EUR'),
@@ -225,13 +243,6 @@ class ProductResource extends Resource
                     ->falseIcon('')
                     ->trueColor('primary'),
 
-                IconColumn::make('is_virtual')
-                    ->label('Virtual')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check')
-                    ->falseIcon('heroicon-o-x-mark')
-                    ->trueColor('primary'),
-
                 IconColumn::make('is_downloadable')
                     ->label('Downloadable')
                     ->boolean()
@@ -253,7 +264,7 @@ class ProductResource extends Resource
                     ->falseIcon('')
                     ->trueColor('primary'),
 
-                TextColumn::make('related_parametric'),
+                // TextColumn::make('related_parametric'),
 
                 TextColumn::make('downloads'),
 
