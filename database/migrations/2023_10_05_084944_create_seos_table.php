@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('seoable_id');
             $table->string('title');
             $table->string('meta_description');
-            $table->string('meta_tags');
+            $table->string('meta_keywords');
             $table->timestamps();
 
             $table->index(['seoable_type', 'seoable_id']);

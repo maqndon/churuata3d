@@ -165,8 +165,10 @@ class ProductResource extends Resource
                             ->schema([
                                 TextInput::make('title')
                                     ->label('SEO Title'),
+
                                 Textarea::make('meta_description'),
-                                Textarea::make('meta_tags'),
+
+                                Textarea::make('meta_keywords'),
                             ])->columns(1),
 
                         FileUpload::make('images')
