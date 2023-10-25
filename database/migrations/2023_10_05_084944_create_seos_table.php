@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('seos', function (Blueprint $table) {
             $table->id();
-            $table->enum('seoable_type', ['post', 'product'])->default('product');
+            $table->enum('seoable_type', ['App\\\Models\\\Post', 'App\\\Models\\\Product'])->default('App\\\Models\\\Product');
             $table->unsignedBigInteger('seoable_id');
             $table->string('title');
             $table->string('meta_description');
+            $table->string('meta_tags');
             $table->timestamps();
 
             $table->index(['seoable_type', 'seoable_id']);

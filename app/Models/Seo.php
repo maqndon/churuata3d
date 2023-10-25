@@ -10,6 +10,12 @@ class Seo extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'meta_description',
+        'meta_tags'
+    ];
+
     public function seoable(): MorphTo
     {
         return $this->morphTo();

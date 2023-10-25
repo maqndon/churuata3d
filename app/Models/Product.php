@@ -42,7 +42,6 @@ class Product extends Model
         'is_parametric' => 'boolean',
         'tags' => 'array',
         'categories' => 'array',
-        'seos' => 'array',
         'images' => 'array',
         'files' => 'array',
     ];
@@ -109,18 +108,18 @@ class Product extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function seos(): MorphMany
+    public function seos(): MorphOne
     {
-        return $this->morphMany(Seo::class, 'seoable');
+        return $this->morphOne(Seo::class, 'seoable');
     }
 
     public function images(): MorphMany
     {
-        return $this->MorphMany(Seo::class, 'imageable');
+        return $this->MorphMany(Image::class, 'imageable');
     }
 
     public function files(): MorphMany
     {
-        return $this->morphMany(Seo::class, 'fileable');
+        return $this->morphMany(File::class, 'fileable');
     }
 }

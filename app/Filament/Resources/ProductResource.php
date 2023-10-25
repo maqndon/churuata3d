@@ -17,7 +17,9 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -158,11 +160,19 @@ class ProductResource extends Resource
                         //     // ->relatedTo('files')
                         //     ->multiple(),
 
-                        // FileUpload::make('images')
-                        // ->image()
-                        // ->reorderable()
-                        // ->relatedTo('images')
-                        // ->imageEditor(),
+                        Group::make()
+                            ->relationship('seos')
+                            ->schema([
+                                TextInput::make('title')
+                                    ->label('SEO Title'),
+                                Textarea::make('meta_description'),
+                                Textarea::make('meta_tags'),
+                            ])->columns(1),
+
+                        FileUpload::make('images')
+                        ->image()
+                        ->reorderable()
+                        ->imageEditor(),
 
                         TextInput::make('stock')
                             ->numeric()
@@ -295,7 +305,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // RelationManagers\SeosRelationManager::class,
         ];
     }
 
