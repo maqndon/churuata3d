@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('status', ['published', 'draft'])->default('draft');
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_downloadable')->default(true);
+            $table->boolean('is_free')->default(true);
             $table->boolean('is_printable')->default(true);
             $table->boolean('is_parametric')->default(false);
             $table->string('related_parametric')->nullable();

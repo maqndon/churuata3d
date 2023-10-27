@@ -13,7 +13,11 @@ class Seo extends Model
     protected $fillable = [
         'title',
         'meta_description',
-        'meta_tags'
+        'meta_keywords'
+    ];
+
+    protected $cast = [
+        // 'meta_keywords' => 'array',
     ];
 
     public function seoable(): MorphTo

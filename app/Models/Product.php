@@ -29,6 +29,7 @@ class Product extends Model
         'sale_price',
         'is_featured',
         'is_downloadable',
+        'is_free',
         'is_printable',
         'is_parametric',
         'related_parametric',
@@ -40,8 +41,6 @@ class Product extends Model
         'is_downloadable' => 'boolean',
         'is_printable' => 'boolean',
         'is_parametric' => 'boolean',
-        'tags' => 'array',
-        'categories' => 'array',
         'images' => 'array',
         'files' => 'array',
     ];

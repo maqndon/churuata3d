@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Models\Seo;
 use Filament\Tables;
 use App\Models\Licence;
 use App\Models\Product;
@@ -22,6 +23,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -117,36 +119,51 @@ class ProductResource extends Resource
                             ->default(ProductStatus::DRAFT->value)
                             ->live(),
 
-                        Toggle::make('is_featured')
-                            ->label('Featured')
-                            ->default(false),
-
-                        Toggle::make('is_downloadable')
-                            ->label('Downloadable')
-                            ->default(true),
-
-                        Toggle::make('is_printable')
-                            ->label('Printable')
-                            ->default(true)
-                            ->live(),
-
                         Group::make()
-                            ->relationship('print_supports_rafts')
                             ->schema([
-                                Toggle::make('has_supports')
-                                    ->label('Supports')
+
+                                Toggle::make('is_featured')
+                                    ->label('Featured')
                                     ->default(false),
 
-                                Toggle::make('has_raft')
-                                    ->label('Raft')
-                                    ->default(false),
-                            ])
-                            ->hidden(fn (Get $get) => $get('is_printable') !== true)
-                            ->disabled(fn (Get $get) => $get('is_printable') !== true),
+                                Toggle::make('is_downloadable')
+                                    ->label('Downloadable')
+                                    ->default(true)
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('is_printable', false))
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('is_free', false))
+                                    ->live(),
 
-                        Toggle::make('is_parametric')
-                            ->label('Parametric')
-                            ->live(),
+                                Toggle::make('is_free')
+                                    ->label('Free Model')
+                                    ->default(true)
+                                    ->live()
+                                    ->hidden(fn (Get $get):bool => !$get('is_downloadable'))
+                                    ->disabled(fn (Get $get):bool => !$get('is_downloadable')),
+
+                                Toggle::make('is_printable')
+                                    ->label('Printable')
+                                    ->default(true)
+                                    ->live(),
+
+                                Toggle::make('is_parametric')
+                                    ->label('Parametric')
+                                    ->live(),
+
+                                Group::make()
+                                    ->relationship('print_supports_rafts')
+                                    ->schema([
+                                        Toggle::make('has_supports')
+                                            ->label('Supports')
+                                            ->default(false),
+
+                                        Toggle::make('has_raft')
+                                            ->label('Raft')
+                                            ->default(false),
+                                    ])
+                                    ->hidden(fn (Get $get):bool => !$get('is_printable'))
+                                    ->disabled(fn (Get $get):bool => !$get('is_printable')),
+
+                            ])->columns(2),
 
                         Select::make('related_parametric')
                             ->options($products = Product::where('status', 'published')->where('is_parametric', 1)->pluck('title', 'id'))
@@ -154,11 +171,6 @@ class ProductResource extends Resource
                             ->disabled(fn (Get $get): bool => $get('is_parametric') || $products->isEmpty())
                             ->searchable()
                             ->preload(),
-
-                        // FileUpload::make('files')
-                        //     ->preserveFilenames()
-                        //     // ->relatedTo('files')
-                        //     ->multiple(),
 
                         Group::make()
                             ->relationship('seos')
@@ -168,24 +180,42 @@ class ProductResource extends Resource
 
                                 Textarea::make('meta_description'),
 
-                                Textarea::make('meta_keywords'),
+                                TagsInput::make('meta_keywords')
+                                    ->placeholder('New meta keyword')
+                                    ->splitKeys(['Tab', ' ']),
                             ])->columns(1),
 
                         FileUpload::make('images')
-                        ->image()
-                        ->reorderable()
-                        ->imageEditor(),
+                            ->image()
+                            ->reorderable()
+                            ->imageEditor(),
+
+                        FileUpload::make('files')
+                            ->preserveFilenames()
+                            ->reorderable()
+                            ->multiple()
+                            ->hidden(fn (Get $get): bool => !$get('is_downloadable'))
+                            ->disabled(fn (Get $get): bool => !$get('is_downloadable')),
 
                         TextInput::make('stock')
                             ->numeric()
                             ->minValue(1)
-                            ->maxValue(100),
+                            ->maxValue(100)
+                            ->hidden(fn (Get $get): bool => $get('is_downloadable'))
+                            ->disabled(fn (Get $get): bool => $get('is_downloadable')),
 
-                        TextInput::make('price')
-                            ->numeric(),
+                        Group::make()->schema([
 
-                        TextInput::make('sale_price')
-                            ->numeric(),
+                            TextInput::make('price')
+                                ->numeric(),
+
+                            TextInput::make('sale_price')
+                                ->numeric(),
+
+                        ])
+                            ->hidden(fn (Get $get): bool => $get('is_free'))
+                            ->disabled(fn (Get $get): bool => $get('is_free'))
+                            ->columns(2),
 
                         Select::make('categories')
                             ->label('Categories')
