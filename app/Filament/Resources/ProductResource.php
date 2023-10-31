@@ -178,7 +178,8 @@ class ProductResource extends Resource
                                 Textarea::make('meta_description'),
 
                                 TagsInput::make('meta_keywords')
-                                    ->placeholder('New meta keyword'),
+                                    ->placeholder('New meta keyword')
+                                    ->splitKeys(['Tab', ' ']),
 
                             ])->columns(1),
 
@@ -190,7 +191,8 @@ class ProductResource extends Resource
                                     ->preserveFilenames()
                                     ->image()
                                     ->reorderable()
-                                    ->imageEditor(),
+                                    ->imageEditor()
+                                    ->multiple(),
                             ])->columns(1),
 
                         Group::make()
