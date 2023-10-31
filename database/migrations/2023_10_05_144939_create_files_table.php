@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->enum('fileable_type', ['post', 'product'])->default('product');
+            $table->enum('fileable_type', ['App\\\Models\\\Post', 'App\\\Models\\\Product'])->default('App\\\Models\\\Product');
             $table->unsignedBigInteger('fileable_id');
-            $table->string('path');
-            $table->string('metadata');
+            $table->string('files_names');
+            $table->string('metadata')->nullable();
             $table->timestamps();
 
             $table->index(['fileable_type', 'fileable_id']);

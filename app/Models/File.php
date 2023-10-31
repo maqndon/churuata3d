@@ -10,6 +10,17 @@ class File extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'fileable_type',
+        'fileable_id',
+        'files_names',
+        'metadata'
+    ];
+
+    // protected $cast = [
+    //     'files_names' => 'array',
+    // ];
+
     public function fileable(): MorphTo
     {
         return $this->morphTo();

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->enum('imageable_type', ['post', 'product'])->default('product');
+            $table->enum('imageable_type', ['App\\\Models\\\Post', 'App\\\Models\\\Product'])->default('App\\\Models\\\Product');
             $table->unsignedBigInteger('imageable_id');
-            $table->string('path');
+            $table->string('images_names');
             $table->string('metadata');
             $table->timestamps();
 

@@ -17,7 +17,7 @@ class Seo extends Model
     ];
 
     protected $cast = [
-        // 'meta_keywords' => 'array',
+        'meta_keywords' => 'array',
     ];
 
     public function seoable(): MorphTo

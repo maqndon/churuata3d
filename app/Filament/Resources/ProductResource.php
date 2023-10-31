@@ -137,8 +137,8 @@ class ProductResource extends Resource
                                     ->label('Free Model')
                                     ->default(true)
                                     ->live()
-                                    ->hidden(fn (Get $get):bool => !$get('is_downloadable'))
-                                    ->disabled(fn (Get $get):bool => !$get('is_downloadable')),
+                                    ->hidden(fn (Get $get): bool => !$get('is_downloadable'))
+                                    ->disabled(fn (Get $get): bool => !$get('is_downloadable')),
 
                                 Toggle::make('is_printable')
                                     ->label('Printable')
@@ -160,8 +160,8 @@ class ProductResource extends Resource
                                             ->label('Raft')
                                             ->default(false),
                                     ])
-                                    ->hidden(fn (Get $get):bool => !$get('is_printable'))
-                                    ->disabled(fn (Get $get):bool => !$get('is_printable')),
+                                    ->hidden(fn (Get $get): bool => !$get('is_printable'))
+                                    ->disabled(fn (Get $get): bool => !$get('is_printable')),
 
                             ])->columns(2),
 
@@ -175,27 +175,38 @@ class ProductResource extends Resource
                         Group::make()
                             ->relationship('seos')
                             ->schema([
+
                                 TextInput::make('title')
                                     ->label('SEO Title'),
 
                                 Textarea::make('meta_description'),
 
-                                TagsInput::make('meta_keywords')
-                                    ->placeholder('New meta keyword')
-                                    ->splitKeys(['Tab', ' ']),
                             ])->columns(1),
 
-                        FileUpload::make('images')
+                        Group::make()
+                            ->relationship('seos')
+                            ->schema([
+
+                                TagsInput::make('meta_keywords')
+                                    ->placeholder('New meta keyword'),
+                                // ->splitKeys(['Tab', ' ']),
+
+                            ])->columns(1),
+
+                        FileUpload::make('image_name')
                             ->image()
                             ->reorderable()
                             ->imageEditor(),
 
-                        FileUpload::make('files')
-                            ->preserveFilenames()
-                            ->reorderable()
-                            ->multiple()
-                            ->hidden(fn (Get $get): bool => !$get('is_downloadable'))
-                            ->disabled(fn (Get $get): bool => !$get('is_downloadable')),
+                        Group::make() 
+                            ->relationship('files')
+                            ->schema([
+                                FileUpload::make('files_names')
+                                    ->label('Files')
+                                    ->preserveFilenames()
+                                    ->reorderable()
+                                    // ->multiple(),
+                            ])->columns(1),
 
                         TextInput::make('stock')
                             ->numeric()

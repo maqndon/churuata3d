@@ -117,8 +117,8 @@ class Product extends Model
         return $this->MorphMany(Image::class, 'imageable');
     }
 
-    public function files(): MorphMany
+    public function files(): MorphOne
     {
-        return $this->morphMany(File::class, 'fileable');
+        return $this->morphOne(File::class, 'fileable');
     }
 }
