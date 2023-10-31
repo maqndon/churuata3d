@@ -15,7 +15,7 @@ class Tag extends Model
         'slug'
     ];
 
-    protected $cast = [
+    protected $casts = [
         'tags' => 'array',
     ];
 

@@ -15,7 +15,7 @@ class Category extends Model
         'slug'
     ];
 
-    protected $cast = [
+    protected $casts = [
         'categories' => 'array',
     ];
 

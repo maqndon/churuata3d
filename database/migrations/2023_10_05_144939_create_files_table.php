@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('fileable_type', ['App\\\Models\\\Post', 'App\\\Models\\\Product'])->default('App\\\Models\\\Product');
             $table->unsignedBigInteger('fileable_id');
-            $table->string('files_names');
+            $table->json('files_names');
             $table->string('metadata')->nullable();
             $table->timestamps();
 

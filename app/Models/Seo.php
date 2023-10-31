@@ -16,7 +16,7 @@ class Seo extends Model
         'meta_keywords'
     ];
 
-    protected $cast = [
+    protected $casts = [
         'meta_keywords' => 'array',
     ];
 

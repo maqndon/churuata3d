@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Models\Seo;
 use Filament\Tables;
 use App\Models\Licence;
 use App\Models\Product;
@@ -45,9 +44,6 @@ class ProductResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // dd(Auth::id());
-        // dd($form->model);
-        // $form->model->created_by = Auth::id();
         return $form
             ->schema([
 
@@ -181,31 +177,30 @@ class ProductResource extends Resource
 
                                 Textarea::make('meta_description'),
 
+                                TagsInput::make('meta_keywords')
+                                    ->placeholder('New meta keyword'),
+
                             ])->columns(1),
 
                         Group::make()
-                            ->relationship('seos')
+                            ->relationship('images')
                             ->schema([
-
-                                TagsInput::make('meta_keywords')
-                                    ->placeholder('New meta keyword'),
-                                // ->splitKeys(['Tab', ' ']),
-
+                                FileUpload::make('images_names')
+                                    ->label('Images')
+                                    ->preserveFilenames()
+                                    ->image()
+                                    ->reorderable()
+                                    ->imageEditor(),
                             ])->columns(1),
 
-                        FileUpload::make('image_name')
-                            ->image()
-                            ->reorderable()
-                            ->imageEditor(),
-
-                        Group::make() 
+                        Group::make()
                             ->relationship('files')
                             ->schema([
                                 FileUpload::make('files_names')
                                     ->label('Files')
                                     ->preserveFilenames()
                                     ->reorderable()
-                                    // ->multiple(),
+                                    ->multiple(),
                             ])->columns(1),
 
                         TextInput::make('stock')

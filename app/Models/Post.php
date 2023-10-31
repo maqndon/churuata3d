@@ -11,7 +11,7 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $cast = [
+    protected $casts = [
         'tags' => 'array',
         'categories' => 'array',
     ];

@@ -17,9 +17,9 @@ class File extends Model
         'metadata'
     ];
 
-    // protected $cast = [
-    //     'files_names' => 'array',
-    // ];
+    protected $casts = [
+        'files_names' => 'array',
+    ];
 
     public function fileable(): MorphTo
     {
