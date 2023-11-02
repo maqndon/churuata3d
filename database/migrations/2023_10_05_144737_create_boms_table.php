@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_bill_of_materials', function (Blueprint $table) {
+        Schema::create('boms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->enum('bomable_type', ['App\\\Models\\\Post', 'App\\\Models\\\Product'])->default('App\\\Models\\\Product');
+            $table->unsignedBigInteger('bomable_id');
             $table->string('item');
             $table->timestamps();
         });
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_bill_of_materials');
+        Schema::dropIfExists('boms');
     }
 };

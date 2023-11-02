@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('meta_description');
             $table->text('meta_keywords');
             $table->enum('status', ['published', 'draft', 'pending'])->default('draft');
+            $table->foreignId('related_product')->references('id')->on('products');
             $table->timestamps();
 
         });
