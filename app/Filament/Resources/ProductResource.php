@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
@@ -66,7 +65,7 @@ class ProductResource extends Resource
                         TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
-                            ->columnspan('full'),
+                            ->columnSpanFull(),
 
                         TextInput::make('sku')
                             ->required()
@@ -89,15 +88,19 @@ class ProductResource extends Resource
                             ->columnSpanFull(),
 
                         Repeater::make('bill_of_materials')
-                            ->schema([
-                                TextInput::make('item')
-                                    ->required()
-                                    ->live(onBlur: true),
-                            ])
                             ->relationship('bill_of_materials')
-                            ->itemLabel(fn (array $state): ?string => $state['item'] ?? null)
+                            ->schema([
+                                TextInput::make('qty')
+                                    ->numeric()
+                                    ->required(),
+
+                                TextInput::make('item')
+                                    ->required(),
+                            ])
+                            ->addActionLabel('Add new item')
                             ->columnSpanFull()
-                            ->grid(2),
+                            ->columns(2)
+                            // ->grid(2),
                     ])
                     ->columnSpan(3)
                     ->columns(2),

@@ -94,11 +94,6 @@ class Product extends Model
         return $this->belongsTo(Licence::class);
     }
 
-    // public function bill_of_materials(): HasMany
-    // {
-    //     return $this->hasMany(ProductBillOfMaterial::class);
-    // }
-    
     public function bill_of_materials(): MorphOne
     {
         return $this->morphOne(Bom::class, 'bomable');

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\Post;
 use Filament\Tables;
+use App\Models\Product;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
@@ -73,7 +74,7 @@ class PostResource extends Resource
                                     ->live(onBlur: true),
                             ])
                             ->relationship('bill_of_materials')
-                            ->itemLabel(fn (array $state): ?string => $state['item'] ?? null)
+                            // ->itemLabel(fn (array $state): ?string => $state['item'] ?? null)
                             ->columnSpanFull()
                             ->grid(2),
                     ])
@@ -101,49 +102,10 @@ class PostResource extends Resource
                                     ->label('Featured')
                                     ->default(false),
 
-                                Toggle::make('is_downloadable')
-                                    ->label('Downloadable')
-                                    ->default(true)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('is_printable', false))
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('is_free', false))
-                                    ->live(),
-
-                                Toggle::make('is_free')
-                                    ->label('Free Model')
-                                    ->default(true)
-                                    ->live()
-                                    ->hidden(fn (Get $get): bool => !$get('is_downloadable'))
-                                    ->disabled(fn (Get $get): bool => !$get('is_downloadable')),
-
-                                Toggle::make('is_printable')
-                                    ->label('Printable')
-                                    ->default(true)
-                                    ->live(),
-
-                                Toggle::make('is_parametric')
-                                    ->label('Parametric')
-                                    ->live(),
-
-                                Group::make()
-                                    ->relationship('print_supports_rafts')
-                                    ->schema([
-                                        Toggle::make('has_supports')
-                                            ->label('Supports')
-                                            ->default(false),
-
-                                        Toggle::make('has_raft')
-                                            ->label('Raft')
-                                            ->default(false),
-                                    ])
-                                    ->hidden(fn (Get $get): bool => !$get('is_printable'))
-                                    ->disabled(fn (Get $get): bool => !$get('is_printable')),
-
                             ])->columns(2),
 
-                        Select::make('related_parametric')
-                            ->options($products = Product::where('status', 'published')->where('is_parametric', 1)->pluck('title', 'id'))
-                            ->hidden(fn (Get $get): bool => $get('is_parametric'))
-                            ->disabled(fn (Get $get): bool => $get('is_parametric') || $products->isEmpty())
+                        Select::make('related_product')
+                            ->options($products = Product::where('status', 'published')->pluck('title', 'id'))
                             ->searchable()
                             ->preload(),
 
@@ -184,26 +146,6 @@ class PostResource extends Resource
                                     ->multiple(),
                             ])->columns(1),
 
-                        TextInput::make('stock')
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(100)
-                            ->hidden(fn (Get $get): bool => $get('is_downloadable'))
-                            ->disabled(fn (Get $get): bool => $get('is_downloadable')),
-
-                        Group::make()->schema([
-
-                            TextInput::make('price')
-                                ->numeric(),
-
-                            TextInput::make('sale_price')
-                                ->numeric(),
-
-                        ])
-                            ->hidden(fn (Get $get): bool => $get('is_free'))
-                            ->disabled(fn (Get $get): bool => $get('is_free'))
-                            ->columns(2),
-
                         Select::make('categories')
                             ->label('Categories')
                             ->multiple()
@@ -234,7 +176,6 @@ class PostResource extends Resource
                             ->searchable()
                             ->preload(),
                     ])
-                    // ->extraAttributes(['style' => 'width: 25%'])
                     ->columnSpan(1),
 
             ])->columns(4);
