@@ -15,15 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('author_id')->references('id')->on('users');
             $table->string('title');
-            $table->string('seo_title')->nullable();
             $table->text('excerpt');
             $table->text('body');
-            $table->string('image')->nullable();
             $table->string('slug')->unique();
-            $table->text('meta_description');
-            $table->text('meta_keywords');
+            $table->boolean('is_featured')->default(false);
             $table->enum('status', ['published', 'draft', 'pending'])->default('draft');
-            $table->foreignId('related_product')->references('id')->on('products');
+            $table->foreignId('related_product')->nullable()->references('id')->on('products');
             $table->timestamps();
 
         });

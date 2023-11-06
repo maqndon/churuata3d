@@ -68,15 +68,18 @@ class PostResource extends Resource
                             ->columnSpanFull(),
 
                         Repeater::make('bill_of_materials')
-                            ->schema([
-                                TextInput::make('item')
-                                    ->required()
-                                    ->live(onBlur: true),
-                            ])
                             ->relationship('bill_of_materials')
-                            // ->itemLabel(fn (array $state): ?string => $state['item'] ?? null)
+                            ->schema([
+                                TextInput::make('qty')
+                                    ->numeric()
+                                    ->required(),
+
+                                TextInput::make('item')
+                                    ->required(),
+                            ])
+                            ->addActionLabel('Add new item')
                             ->columnSpanFull()
-                            ->grid(2),
+                            ->columns(2)
                     ])
                     ->columnSpan(3)
                     ->columns(2),
@@ -106,6 +109,7 @@ class PostResource extends Resource
 
                         Select::make('related_product')
                             ->options($products = Product::where('status', 'published')->pluck('title', 'id'))
+                            ->disabled(fn (): bool => $products->isEmpty())
                             ->searchable()
                             ->preload(),
 
@@ -202,14 +206,14 @@ class PostResource extends Resource
                 Tables\Actions\CreateAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -217,5 +221,5 @@ class PostResource extends Resource
             'create' => Pages\CreatePost::route('/create'),
             'edit' => Pages\EditPost::route('/{record}/edit'),
         ];
-    }    
+    }
 }

@@ -100,7 +100,6 @@ class ProductResource extends Resource
                             ->addActionLabel('Add new item')
                             ->columnSpanFull()
                             ->columns(2)
-                            // ->grid(2),
                     ])
                     ->columnSpan(3)
                     ->columns(2),

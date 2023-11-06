@@ -12,10 +12,26 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'tags' => 'array',
-        'categories' => 'array',
+    protected $fillable = [
+        'title',
+        'body',
+        'excerpt',
+        'slug',
+        'status',
+        'is_featured',
+        'related_product',
     ];
+
+    protected $casts = [
+        'is_featured' => 'boolean',
+    ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->attributes['author_id'] = auth()->id();
+    }
 
     public function categories(): BelongsToMany
     {
