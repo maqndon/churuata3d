@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->integer('quantity')->default(1);
             $table->decimal('amount');
-            $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();
         });
     }
