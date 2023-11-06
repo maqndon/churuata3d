@@ -316,8 +316,6 @@ class ProductResource extends Resource
                     ->falseIcon('')
                     ->trueColor('primary'),
 
-                // TextColumn::make('related_parametric'),
-
                 TextColumn::make('downloads'),
 
                 TextColumn::make('categories.name')
@@ -347,7 +345,6 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // RelationManagers\SeosRelationManager::class,
         ];
     }
 
