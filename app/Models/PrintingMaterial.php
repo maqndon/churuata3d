@@ -17,6 +17,10 @@ class PrintingMaterial extends Model
         'max_hot_bed_temp'
     ];
 
+    protected $casts = [
+        'printing_materials' => 'array',
+    ];
+
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(PrintSetting::class);

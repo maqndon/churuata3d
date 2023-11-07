@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use App\Enums\ProductStatus;
+use App\Models\PrintingMaterial;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Facades\Auth;
@@ -154,13 +155,13 @@ class ProductResource extends Resource
                                     ->hidden(fn (Get $get): bool => !$get('is_downloadable'))
                                     ->disabled(fn (Get $get): bool => !$get('is_downloadable')),
 
+                                Toggle::make('is_parametric')
+                                    ->label('Parametric')
+                                    ->live(),
+
                                 Toggle::make('is_printable')
                                     ->label('Printable')
                                     ->default(true)
-                                    ->live(),
-
-                                Toggle::make('is_parametric')
-                                    ->label('Parametric')
                                     ->live(),
 
                                 Group::make()
@@ -175,9 +176,19 @@ class ProductResource extends Resource
                                             ->default(false),
                                     ])
                                     ->hidden(fn (Get $get): bool => !$get('is_printable'))
-                                    ->disabled(fn (Get $get): bool => !$get('is_printable')),
+                                    ->disabled(fn (Get $get): bool => !$get('is_printable'))
+                                    ->columns(2), //maybe is a bad idea to have 2 columns here
 
                             ])->columns(2),
+
+                        Select::make('printing_materials')
+                            ->options(PrintingMaterial::all()->pluck('name', 'id'))
+                            ->relationship(name: 'printing_materials', titleAttribute: 'name')
+                            ->hidden(fn (Get $get): bool => !$get('is_printable'))
+                            ->disabled(fn (Get $get): bool => !$get('is_printable'))
+                            ->multiple()
+                            ->searchable()
+                            ->preload(),
 
                         Select::make('related_parametric')
                             ->options($products = Product::where('status', 'published')->where('is_parametric', 1)->pluck('title', 'id'))
