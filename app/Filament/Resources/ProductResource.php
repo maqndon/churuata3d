@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use App\Enums\ProductStatus;
+use App\Models\PrintSetting;
 use App\Models\PrintingMaterial;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
@@ -187,6 +188,18 @@ class ProductResource extends Resource
                             ->hidden(fn (Get $get): bool => !$get('is_printable'))
                             ->disabled(fn (Get $get): bool => !$get('is_printable'))
                             ->multiple()
+                            ->searchable()
+                            ->preload(),
+
+                        Select::make('print_settings')
+                            ->label('Recommended Print Settings')
+                            ->options(PrintSetting::all()->pluck('print_strength', 'id'))
+                            ->relationship(
+                                name: 'print_settings',
+                                titleAttribute: 'description',
+                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('id'))
+                            ->hidden(fn (Get $get): bool => !$get('is_printable'))
+                            ->disabled(fn (Get $get): bool => !$get('is_printable'))
                             ->searchable()
                             ->preload(),
 

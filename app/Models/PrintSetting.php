@@ -21,6 +21,10 @@ class PrintSetting extends Model
         'speed'
     ];
 
+    protected $casts = [
+        'print_settings' => 'array',
+    ];
+
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'product_print_settings');

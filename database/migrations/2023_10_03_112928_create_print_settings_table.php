@@ -20,6 +20,7 @@ return new class extends Migration
             $table->tinyInteger('bottom_layers')->unsigned();
             $table->tinyInteger('walls')->unsigned();
             $table->tinyInteger('speed')->unsigned();
+            $table->string('description')->virtualAs("CONCAT(print_strength,' (Resolution: ', resolution,'mm Infill: ', infill,'% Speed: ', speed, 'mm/s)')");
             $table->timestamps();
         });
     }
