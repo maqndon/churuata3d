@@ -14,6 +14,7 @@ use App\Enums\ProductStatus;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
@@ -70,8 +71,13 @@ class ProductResource extends Resource
                             ->columnspan('full'),
 
                         TextInput::make('slug')
+                            ->label('Permalink')
                             ->required()
+                            // ->url()
+                            ->prefix(env('APP_URL') . '/products/')
+                            ->suffixIcon('heroicon-m-globe-alt')
                             ->maxLength(255)
+                            // ->disabled()
                             ->columnSpanFull(),
 
                         TextInput::make('sku')
@@ -99,10 +105,13 @@ class ProductResource extends Resource
                             ->schema([
                                 TextInput::make('qty')
                                     ->numeric()
+                                    ->minValue(1)
+                                    ->maxValue(100)
                                     ->required(),
 
                                 TextInput::make('item')
-                                    ->required(),
+                                    ->required()
+                                    ->minLength(3),
                             ])
                             ->addActionLabel('Add new item')
                             ->columnSpanFull()
@@ -241,9 +250,10 @@ class ProductResource extends Resource
                             ->createOptionForm([
                                 TextInput::make('name')
                                     ->live()
+                                    ->minLength(3)
                                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
                                     ->required(),
-                                TextInput::make('slug')
+                                Hidden::make('slug')
                                     ->required()
                             ])
                             ->searchable()
@@ -256,9 +266,10 @@ class ProductResource extends Resource
                             ->createOptionForm([
                                 TextInput::make('name')
                                     ->live()
+                                    ->minLength(3)
                                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
                                     ->required(),
-                                TextInput::make('slug')
+                                Hidden::make('slug')
                                     ->required()
                             ])
                             ->searchable()
