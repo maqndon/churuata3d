@@ -9,8 +9,8 @@
 
 <script setup>
     import { ref, watch } from "vue"
-    import { Inertia } from "@inertiajs/inertia"
     import debounce from "lodash/debounce"
+    import { router } from '@inertiajs/vue3'
 
     const props = defineProps({
         modelValue: Object,
@@ -19,7 +19,7 @@
     let search = ref(props.modelValue.filters)
     
     watch(search, debounce(function (value) {
-        Inertia.get(props.modelValue.table, { search: value }, {
+        router.get(props.modelValue.table, { search: value }, {
             preserveState: true,
             replace: true
         })

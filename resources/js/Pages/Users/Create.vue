@@ -68,12 +68,11 @@
 
 <script setup>
     import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
-    import { Head } from '@inertiajs/inertia-vue3'
+    import { Head, router } from '@inertiajs/vue3'
     import { reactive } from 'vue'
     import SelectInput from '@/Shared/SelectInput.vue';
-    import { Inertia } from "@inertiajs/inertia"
 
-    defineProps({
+    const props = defineProps({
         data: Object,
         errors: Object,
     })
@@ -87,7 +86,7 @@
     })
     
     function submit() {
-        Inertia.post('/users/', form)
+        router.post('/users/', form)
     }
 
 </script>

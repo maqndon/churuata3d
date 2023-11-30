@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Models\User;
 use Inertia\Inertia;
+use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\Users\StoreUserRequest;
-use App\Services\UserService;
 
 class UserController extends Controller
 {
@@ -36,6 +37,9 @@ class UserController extends Controller
             'query' => [
                 'filters' => $actualQuery['search'],
                 'table' => 'users'
+            ],
+            'can' => [
+                'createUser' => Auth::user()->can('create', User::class)
             ]
         ]);
     }

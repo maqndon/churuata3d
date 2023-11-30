@@ -15,7 +15,7 @@
                             </div>
                             <div class="place-items-end">
                                 <form @submit.prevent="submit">
-                                    <button>Create User</button>
+                                    <button v-if = "can.createUser">Create User</button>
                                 </form>
                             </div>
                         </div>
@@ -91,20 +91,20 @@
     import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
     import SearchInput from '@/Shared/SearchInput.vue'
     import Pagination from '@/Shared/Pagination.vue'
-    import { Head, Link } from '@inertiajs/inertia-vue3'
-    import { Inertia } from "@inertiajs/inertia"
+    import { Head, Link, router } from '@inertiajs/vue3'
     import { reactive, onMounted } from 'vue'
 
     defineProps({
         users: Object,
         query: Object,
+        can: Object,
     })
 
     const form = reactive({
     })
 
     function submit() {
-        Inertia.get('/users/create', form)
+        router.get('/users/create', form)
     }
 
     // remove the flash message after 2 seconds

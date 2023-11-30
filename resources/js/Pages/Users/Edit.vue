@@ -69,26 +69,25 @@
 
 <script setup>
     import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
-    import { Head } from '@inertiajs/inertia-vue3'
+    import { Head, router } from '@inertiajs/vue3'
     import { reactive, onUpdated } from 'vue'
     import SelectInput from '@/Shared/SelectInput.vue';
-    import { Inertia } from "@inertiajs/inertia"
 
-    defineProps({
+    const props = defineProps({
         data: Object,
         errors: Object,
     })
 
     const form = reactive({
-        first_name: Inertia.page.props.data.user.first_name,
-        last_name: Inertia.page.props.data.user.last_name,
-        username: Inertia.page.props.data.user.username,
-        email: Inertia.page.props.data.user.email,
-        role: Inertia.page.props.data.user.role_id,
+        first_name: props.data.user.first_name,
+        last_name: props.data.user.last_name,
+        username: props.data.user.username,
+        email: props.data.user.email,
+        role: props.data.user.role_id,
     })
     
     function submit() {
-        Inertia.put('/users/' + Inertia.page.props.data.user.id, form)
+        router.put('/users/' + props.data.user.id, form)
     }
 
     //remove the flash message after 2 seconds

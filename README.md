@@ -25,7 +25,7 @@ This project was built with Laravel 9.26.1, PHP 8.1.1 and mysql Ver 15.1 Distrib
 ## How to Install
 
 1. Clone the repo : `git clone https://github.com/maqndon/spa-crm.git`
-2. `$ cd SPA-CRM`
+2. `$ cd spa-crm`
 3. `$ composer install`
 4. `$ cp .env.example .env`
 5. `$ php artisan key:generate`
