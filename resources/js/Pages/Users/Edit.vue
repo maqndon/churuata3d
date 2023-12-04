@@ -7,7 +7,7 @@
                 <div class="bg-white overflow-hidden">
                     <div class="p-4 bg-gray-100 border-gray-200">
                         <!-- Page Title -->
-                        <h1 class="text-gray-600 text-2xl">Users</h1>
+                        <h1 class="text-gray-600 text-2xl">User</h1>
                     </div>
                 </div>
                 <!-- Flash Updated Message -->
