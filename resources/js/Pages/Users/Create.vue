@@ -1,5 +1,5 @@
 <template>
-    <Head title="Edit User"/>
+    <Head title="New User"/>
 
     <BreezeAuthenticatedLayout>
         <div class="py-14">
@@ -7,7 +7,7 @@
                 <div class="bg-white overflow-hidden">
                     <div class="p-4 bg-gray-100 border-gray-200">
                         <!-- Page Title -->
-                        <h1 class="text-gray-600 text-2xl">Users</h1>
+                        <h1 class="text-gray-600 text-2xl">New User</h1>
                     </div>
                 </div>
                 <!-- Form -->
@@ -41,7 +41,7 @@
                                         <div v-if="errors.email" class="my-1 bg-red-100 rounded-lg py-2 px-3 mb-4 text-base text-red-700 mb-3" role="alert">{{ errors.email }}</div>
                                     </div>
 
-                                    <div class="col-span-6 sm:col-span-3">
+                                    <div class="col-span-6">
                                         <SelectInput v-model="form.role" v-if="$page.props.auth.user.role_id===1" label="Role">
                                             <option disabled :value="form.role">Please select a Role</option>
                                             <option v-for="role in data.roles" :value="role.id">{{ role.name }}</option>

@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
-use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Services\EmployeeService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use App\Http\Requests\Employees\StoreEmployeeRequest;
 
 class EmployeeController extends Controller
 {
@@ -34,9 +35,40 @@ class EmployeeController extends Controller
                 'table' => 'employees'
             ],
             'can' => [
-                'createUser' => Auth::user()->can('create', User::class)
+                'createEmployee' => Auth::user()->can('create', Employee::class)
             ]
         ]);
+    }
+
+        /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $data = [
+            'companies' => Company::all(),
+        ];
+
+        return Inertia::render('Employees/Create', [
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreEmployeeRequest $request, EmployeeService $employeeService)
+    {
+
+        $employee = $employeeService->createEmployee($request);
+
+        return redirect()->route('employees.store', $employee)
+            ->with('message', 'The employee was successfully created');
     }
 
     /**

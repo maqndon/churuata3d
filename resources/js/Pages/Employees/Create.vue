@@ -1,5 +1,5 @@
 <template>
-    <Head title="Edit User"/>
+    <Head title="New Employee"/>
 
     <BreezeAuthenticatedLayout>
         <div class="py-14">
@@ -7,11 +7,9 @@
                 <div class="bg-white overflow-hidden">
                     <div class="p-4 bg-gray-100 border-gray-200">
                         <!-- Page Title -->
-                        <h1 class="text-gray-600 text-2xl">Edit User</h1>
+                        <h1 class="text-gray-600 text-2xl">New Employee</h1>
                     </div>
                 </div>
-                <!-- Flash Updated Message -->
-                <div id="flashMessage" v-if="$page.props.flash.message" class="bg-green-100 rounded-lg py-1 px-6 mb-4 text-base text-green-700 mb-3" role="alert">{{ $page.props.flash.message }}</div>
                 <!-- Form -->
                 <div class="mt-5 md:col-span-2 md:mt-0 lg:px-4">
                     <form @submit.prevent="submit">
@@ -32,9 +30,9 @@
                                     </div>
 
                                     <div class="col-span-6 sm:col-span-3">
-                                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                                        <input type="text" name="username" id="username" autocomplete="user" v-model="form.username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
-                                        <div v-if="errors.username" class="my-1 bg-red-100 rounded-lg py-2 px-3 mb-4 text-base text-red-700 mb-3" role="alert">{{ errors.username }}</div>
+                                        <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                                        <input type="text" name="phone" id="phone" autocomplete="phone" v-model="form.phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                        <div v-if="errors.phone" class="my-1 bg-red-100 rounded-lg py-2 px-3 mb-4 text-base text-red-700 mb-3" role="alert">{{ errors.phone }}</div>
                                     </div>
 
                                     <div class="col-span-6 sm:col-span-3">
@@ -43,11 +41,12 @@
                                         <div v-if="errors.email" class="my-1 bg-red-100 rounded-lg py-2 px-3 mb-4 text-base text-red-700 mb-3" role="alert">{{ errors.email }}</div>
                                     </div>
 
-                                    <div class="col-span-6 sm:col-span-3">
-                                        <SelectInput v-model="form.role" v-if="$page.props.auth.user.role_id===1" label="Role">
-                                            <option v-for="role in data.roles" :value="role.id">{{ role.name }}</option>
+                                    <div class="col-span-6">
+                                        <SelectInput v-model="form.company_id" label="Company">
+                                            <option disabled :value="form.company_id">Please select a Company</option>
+                                            <option v-for="company in data.companies" :value="company.id">{{ company.name }}</option>
                                         </SelectInput>
-                                        <div v-if="errors.role" class="my-1 bg-red-100 rounded-lg py-2 px-3 mb-4 text-base text-red-700 mb-3" role="alert">{{ errors.role }}</div>
+                                        <div v-if="errors.company_id" class="my-1 bg-red-100 rounded-lg py-2 px-3 mb-4 text-base text-red-700 mb-3" company_id="alert">{{ errors.company_id }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -56,7 +55,7 @@
                                     type="submit"
                                     :disabled="form.processing"
                                     class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                    Update
+                                    Create Employee
                                 </button>
                             </div>
                         </div>
@@ -70,7 +69,7 @@
 <script setup>
     import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
     import { Head, router } from '@inertiajs/vue3'
-    import { reactive, onUpdated } from 'vue'
+    import { reactive } from 'vue'
     import SelectInput from '@/Shared/SelectInput.vue';
 
     const props = defineProps({
@@ -79,27 +78,15 @@
     })
 
     const form = reactive({
-        first_name: props.data.user.first_name,
-        last_name: props.data.user.last_name,
-        username: props.data.user.username,
-        email: props.data.user.email,
-        role: props.data.user.role_id,
+        first_name: '',
+        last_name: '',
+        phone: '',
+        email: '',
+        company_id: 0,
     })
     
     function submit() {
-        router.put('/users/' + props.data.user.id, form)
+        router.post('/employees/', form)
     }
 
-    //remove the flash message after 2 seconds
-    onUpdated(() => {
-        if(document.getElementById('flashMessage')){
-            let flashMessage = document.getElementById('flashMessage')
-            //remove the class hidden (display: none)
-            flashMessage.classList.remove("hidden")
-            setTimeout(() => {
-                //add the class hidden (display: none)
-                flashMessage.classList.add("hidden")
-            }, "2000")
-        }
-    })
 </script>
