@@ -24,6 +24,9 @@
                                 <BreezeNavLink :href="route('employees.index')" :active="route().current('employees.index')">
                                     Employees
                                 </BreezeNavLink>
+                                <BreezeNavLink :href="route('companies.index')" :active="route().current('employees.index')">
+                                    Companies
+                                </BreezeNavLink>
                             </div>
                         </div>
 
@@ -78,6 +81,9 @@
                         </BreezeResponsiveNavLink>
                         <BreezeResponsiveNavLink :href="route('employees.index')" :active="route().current('employees.index')">
                             Employees
+                        </BreezeResponsiveNavLink>
+                        <BreezeResponsiveNavLink :href="route('companies.index')" :active="route().current('employees.index')">
+                            Companies
                         </BreezeResponsiveNavLink>
                     </div>
 

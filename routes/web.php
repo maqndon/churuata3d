@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DashboardController;
 
@@ -35,6 +36,8 @@ Route::group((['middleware' => 'auth', 'middleware' => 'verified']), function ()
     Route::resource('users', UserController::class);
 
     Route::resource('employees', EmployeeController::class);
+
+    Route::resource('companies', CompanyController::class);
 
     Route::resource('roles', RoleController::class);
 });
