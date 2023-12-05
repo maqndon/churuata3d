@@ -10,13 +10,13 @@ This project was built with Laravel 9.26.1, PHP 8.1.1 and mysql Ver 15.1 Distrib
 
 * [x] User Auth with Breeze: log in only as administrator.
 * [x] Use database seeds to create first user with email admin@admin.com and password "password".
-* [ ] CRUD functionality (Create / Read / Update / Delete) for menu items: Companies and Employees.
-* [ ] Companies DB table with these fields: Name (required), email, logo (minimum 100×100), website.
-* [ ] Employees DB table with these fields: First Name (required), last name (required), Company (foreign key to Companies), email, phone.
+* [x] CRUD functionality (Create / Read / Update / Delete) for menu items: Companies and Employees.
+* [x] Companies DB table with these fields: Name (required), email, logo (minimum 100×100), website.
+* [x] Employees DB table with these fields: First Name (required), last name (required), Company (foreign key to Companies), email, phone.
 * [x] Use database migrations to create those schemas above.
 * [ ] Store companies logos in storage/app/public/images folder and make them accessible from public.
 * [x] Route:groups and Route::resorces implementation.
-* [ ] Use Laravel's validation function, using Request classes.
+* [x] Use Laravel's validation function, using Request classes.
 * [x] Use Laravel's pagination for showing Companies/Employees list, 10 entries per page.
 * [x] I have used [Breeze](https://laravel.com/docs/9.x/starter-kits#laravel-breeze) & Vuejs.
 * [x] Preserve States on the search box.
