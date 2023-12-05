@@ -43,7 +43,7 @@
 
                                     <div class="col-span-6">
                                         <SelectInput v-model="form.company_id" label="Company">
-                                            <option disabled :value="form.company_id">Please select a Company</option>
+                                            <option disabled :value=0>Please select a Company</option>
                                             <option v-for="company in data.companies" :value="company.id">{{ company.name }}</option>
                                         </SelectInput>
                                         <div v-if="errors.company_id" class="my-1 bg-red-100 rounded-lg py-2 px-3 mb-4 text-base text-red-700 mb-3" company_id="alert">{{ errors.company_id }}</div>

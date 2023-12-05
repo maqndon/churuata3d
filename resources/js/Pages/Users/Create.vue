@@ -43,7 +43,7 @@
 
                                     <div class="col-span-6">
                                         <SelectInput v-model="form.role" v-if="$page.props.auth.user.role_id===1" label="Role">
-                                            <option disabled :value="form.role">Please select a Role</option>
+                                            <option disabled value=0>Please select a Role</option>
                                             <option v-for="role in data.roles" :value="role.id">{{ role.name }}</option>
                                         </SelectInput>
                                         <div v-if="errors.role" class="my-1 bg-red-100 rounded-lg py-2 px-3 mb-4 text-base text-red-700 mb-3" role="alert">{{ errors.role }}</div>
