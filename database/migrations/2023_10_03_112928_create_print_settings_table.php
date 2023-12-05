@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('print_settings', function (Blueprint $table) {
             $table->id();
-            $table->enum('print_strength', ['hollow', 'low', 'medium', 'high', 'solid'])->default('low');
+            $table->enum('print_strength', ['Hollow', 'Low', 'Medium', 'High', 'Solid'])->default('Low');
             $table->decimal('resolution')->default(0.2);
             $table->tinyInteger('infill')->unsigned()->constraint('infill', '<=', 100);
             $table->tinyInteger('top_layers')->unsigned();

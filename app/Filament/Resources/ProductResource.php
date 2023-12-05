@@ -127,8 +127,8 @@ class ProductResource extends Resource
 
                         Select::make('status')
                             ->options([
-                                'published' => ProductStatus::PUBLISHED->value,
-                                'draft' => ProductStatus::DRAFT->value
+                                'Published' => ProductStatus::PUBLISHED->value,
+                                'Draft' => ProductStatus::DRAFT->value
                             ])
                             ->searchable()
                             ->selectablePlaceholder(false)
@@ -270,6 +270,8 @@ class ProductResource extends Resource
                         Select::make('categories')
                             ->label('Categories')
                             ->multiple()
+                            ->minItems(1)
+                            ->maxItems(4)
                             ->relationship(name: 'categories', titleAttribute: 'name')
                             ->createOptionForm([
                                 TextInput::make('name')
@@ -286,6 +288,8 @@ class ProductResource extends Resource
                         Select::make('tags')
                             ->label('Tags')
                             ->multiple()
+                            ->maxItems(4)
+                            ->optionsLimit(15)
                             ->relationship(name: 'tags', titleAttribute: 'name')
                             ->createOptionForm([
                                 TextInput::make('name')
@@ -326,8 +330,8 @@ class ProductResource extends Resource
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'gray',
-                        'published' => 'success',
+                        'Draft' => 'gray',
+                        'Published' => 'success',
                     }),
 
                 IconColumn::make('is_featured')

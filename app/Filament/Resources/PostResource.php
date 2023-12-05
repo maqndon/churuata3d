@@ -98,9 +98,9 @@ class PostResource extends Resource
 
                         Select::make('status')
                             ->options([
-                                'published' => PostStatus::PUBLISHED->value,
-                                'pending' => PostStatus::PENDING->value,
-                                'draft' => PostStatus::DRAFT->value
+                                'Published' => PostStatus::PUBLISHED->value,
+                                'Pending' => PostStatus::PENDING->value,
+                                'Draft' => PostStatus::DRAFT->value
                             ])
                             ->searchable()
                             ->selectablePlaceholder(false)
@@ -117,7 +117,7 @@ class PostResource extends Resource
                             ])->columns(2),
 
                         Select::make('related_product')
-                            ->options($products = Product::where('status', 'published')->pluck('title', 'id'))
+                            ->options($products = Product::where('status', 'Published')->pluck('title', 'id'))
                             ->disabled(fn (): bool => $products->isEmpty())
                             ->searchable()
                             ->preload(),
@@ -209,9 +209,9 @@ class PostResource extends Resource
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'gray',
-                        'pending' => 'warning',
-                        'published' => 'success',
+                        'Draft' => 'gray',
+                        'Pending' => 'warning',
+                        'Published' => 'success',
                     }),
 
                 IconColumn::make('is_featured')

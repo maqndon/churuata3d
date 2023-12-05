@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('stock')->nullable();
             $table->float('price')->nullable();
             $table->float('sale_price')->nullable();
-            $table->enum('status', ['published', 'draft'])->default('draft');
+            $table->enum('status', ['Published', 'Draft'])->default('Draft');
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_downloadable')->default(true);
             $table->boolean('is_free')->default(true);

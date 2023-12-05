@@ -4,9 +4,9 @@ namespace App\Enums;
 
 enum PrintSettings: string
 {
-    case HOLLOW = 'hollow';
-    case LOW = 'low';
-    case MEDIUM = 'medium';
-    case HIGH = 'high';
-    case SOLID = 'solid';
+    case HOLLOW = 'Hollow';
+    case LOW = 'Low';
+    case MEDIUM = 'Medium';
+    case HIGH = 'High';
+    case SOLID = 'Solid';
 }

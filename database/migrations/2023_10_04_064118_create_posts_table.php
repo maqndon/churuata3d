@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('body');
             $table->string('slug')->unique();
             $table->boolean('is_featured')->default(false);
-            $table->enum('status', ['published', 'draft', 'pending'])->default('draft');
+            $table->enum('status', ['Published', 'Draft', 'Pending'])->default('Draft');
             $table->foreignId('related_product')->nullable()->references('id')->on('products');
             $table->timestamps();
 
