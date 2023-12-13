@@ -36,6 +36,8 @@ class PostResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
+    protected static ?string $navigationGroup = 'Blog';
+
     protected static ?int $navigationSort = 2;
 
     public static function getNavigationBadge(): ?string
