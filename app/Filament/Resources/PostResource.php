@@ -25,7 +25,9 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\PostResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\PostResource\RelationManagers;
@@ -201,15 +203,21 @@ class PostResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->limit(40),
+                    ->limit(40)
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('slug')
-                    ->limit(40),
+                    ->limit(40)
+                    ->toggleable(),
 
-                TextColumn::make('author.name'),
+                TextColumn::make('author.name')
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('status')
                     ->badge()
+                    ->sortable()
                     ->color(fn (string $state): string => match ($state) {
                         'Draft' => 'gray',
                         'Pending' => 'warning',
@@ -221,17 +229,45 @@ class PostResource extends Resource
                     ->boolean()
                     ->trueIcon('heroicon-o-star')
                     ->falseIcon('')
-                    ->trueColor('primary'),
+                    ->trueColor('primary')
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('categories.name')
-                    ->badge(),
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('tags.name')
-                    ->badge(),
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
-                //
-            ])
+
+                SelectFilter::make('author_id')
+                    ->label('Author')
+                    ->relationship(name: 'author', titleAttribute: 'name'),
+
+                SelectFilter::make('status')
+                    ->options([
+                        'Published' => PostStatus::PUBLISHED->value,
+                        'Pending' => PostStatus::PENDING->value,
+                        'Draft' => PostStatus::DRAFT->value
+                    ]),
+
+                SelectFilter::make('categories')
+                    ->relationship(name: 'categories', titleAttribute: 'name'),
+
+                SelectFilter::make('tags')
+                    ->relationship(name: 'tags', titleAttribute: 'name'),
+
+                TernaryFilter::make('is_featured')
+                    ->label('Featured Products')
+                    ->trueLabel('Only Featured')
+                    ->falseLabel('Not Featured'),
+
+                    ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),

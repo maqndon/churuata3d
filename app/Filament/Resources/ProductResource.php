@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Closure;
 use Filament\Tables;
 use App\Models\Licence;
 use App\Models\Product;
@@ -28,7 +29,9 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\ProductResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProductResource\RelationManagers;
@@ -199,7 +202,8 @@ class ProductResource extends Resource
                             ->relationship(
                                 name: 'print_settings',
                                 titleAttribute: 'description',
-                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('id'))
+                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('id')
+                            )
                             ->hidden(fn (Get $get): bool => !$get('is_printable'))
                             ->disabled(fn (Get $get): bool => !$get('is_printable'))
                             ->searchable()
@@ -316,10 +320,13 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->limit(40),
+                    ->limit(40)
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('slug')
-                    ->limit(40),
+                    ->limit(40)
+                    ->toggleable(),
 
                 TextColumn::make('price')
                     ->money('EUR'),
@@ -327,10 +334,13 @@ class ProductResource extends Resource
                 TextColumn::make('sale_price')
                     ->money('EUR'),
 
-                TextColumn::make('stock'),
+                TextColumn::make('stock')
+                    ->toggleable()
+                    ->sortable(),
 
                 TextColumn::make('status')
                     ->badge()
+                    ->sortable()
                     ->color(fn (string $state): string => match ($state) {
                         'Draft' => 'gray',
                         'Published' => 'success',
@@ -341,39 +351,83 @@ class ProductResource extends Resource
                     ->boolean()
                     ->trueIcon('heroicon-o-star')
                     ->falseIcon('')
-                    ->trueColor('primary'),
+                    ->trueColor('primary')
+                    ->sortable()
+                    ->toggleable(),
 
                 IconColumn::make('is_downloadable')
                     ->label('Downloadable')
                     ->boolean()
                     ->trueIcon('heroicon-o-check')
                     ->falseIcon('heroicon-o-x-mark')
-                    ->trueColor('primary'),
+                    ->trueColor('primary')
+                    ->sortable()
+                    ->toggleable(),
 
                 IconColumn::make('is_printable')
                     ->label('Printable')
                     ->boolean()
                     ->trueIcon('heroicon-o-check')
                     ->falseIcon('heroicon-o-x-mark')
-                    ->trueColor('primary'),
+                    ->trueColor('primary')
+                    ->sortable()
+                    ->toggleable(),
 
                 IconColumn::make('is_parametric')
                     ->label('Parametric')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('')
-                    ->trueColor('primary'),
+                    ->trueColor('primary')
+                    ->sortable()
+                    ->toggleable(),
 
-                TextColumn::make('downloads'),
+                TextColumn::make('downloads')
+                    ->toggleable(),
 
                 TextColumn::make('categories.name')
-                    ->badge(),
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('tags.name')
-                    ->badge(),
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
-                //
+
+                SelectFilter::make('status')
+                    ->options([
+                        'Published' => ProductStatus::PUBLISHED->value,
+                        'Draft' => ProductStatus::DRAFT->value
+                    ]),
+
+                SelectFilter::make('categories')
+                    ->relationship(name: 'categories', titleAttribute: 'name'),
+
+                SelectFilter::make('tags')
+                    ->relationship(name: 'tags', titleAttribute: 'name'),
+
+                TernaryFilter::make('is_featured')
+                    ->label('Featured Products')
+                    ->trueLabel('Only Featured')
+                    ->falseLabel('Not Featured'),
+
+                TernaryFilter::make('is_downloadable')
+                    ->label('Downloadable Products')
+                    ->trueLabel('Only Downloadables')
+                    ->falseLabel('Not Downloadables'),
+
+                TernaryFilter::make('is_printable')
+                    ->label('Printable Products')
+                    ->trueLabel('Only Printables')
+                    ->falseLabel('Not Printables'),
+
+                TernaryFilter::make('is_parametric')
+                    ->label('Parametric Products')
+                    ->trueLabel('Only Parametrics')
+                    ->falseLabel('Not Parametric'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
