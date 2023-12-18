@@ -68,7 +68,7 @@ class ProductResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->live()
-                            ->dehydrateStateUsing(fn(string $state) => ucwords($state))
+                            ->dehydrateStateUsing(fn (string $state) => ucwords($state))
                             ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
                                 if (($get('slug') ?? '') !== Str::slug($old)) {
                                     return;
@@ -330,14 +330,15 @@ class ProductResource extends Resource
                     ->toggleable(),
 
                 TextColumn::make('price')
-                    ->placeholder(fn($record) => $record->price ?? 'Free')
+                    ->placeholder(fn ($record) => $record->price ?? 'Free')
                     ->money('EUR'),
 
                 TextColumn::make('sale_price')
+                    ->placeholder(fn ($record) => $record->price ?? 'Free')
                     ->money('EUR'),
 
                 TextColumn::make('stock')
-                    ->placeholder(fn($record) => $record->stock ?? '-')
+                    ->placeholder(fn ($record) => $record->stock ?? '-')
                     ->toggleable()
                     ->sortable(),
 
@@ -386,7 +387,7 @@ class ProductResource extends Resource
                     ->toggleable(),
 
                 TextColumn::make('downloads')
-                    ->placeholder(fn($record) => $record->downloads ?? '-')
+                    ->placeholder(fn ($record) => $record->downloads ?? '-')
                     ->toggleable(),
 
                 TextColumn::make('categories.name')
