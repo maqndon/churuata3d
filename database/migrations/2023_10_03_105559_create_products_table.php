@@ -30,7 +30,7 @@ return new class extends Migration
             $table->boolean('is_printable')->default(true);
             $table->boolean('is_parametric')->default(false);
             $table->string('related_parametric')->nullable();
-            $table->unsignedInteger('downloads')->default(0);
+            $table->unsignedInteger('downloads')->nullable();
             $table->timestamps();
         });
     }
