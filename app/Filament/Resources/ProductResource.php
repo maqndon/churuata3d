@@ -15,6 +15,7 @@ use App\Enums\ProductStatus;
 use App\Models\PrintSetting;
 use App\Models\PrintingMaterial;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
@@ -35,6 +36,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\ProductResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ProductResource extends Resource
 {
@@ -73,7 +75,6 @@ class ProductResource extends Resource
                                 if (($get('slug') ?? '') !== Str::slug($old)) {
                                     return;
                                 }
-
                                 $set('slug', Str::slug($state));
                             })
                             ->columnspan('full'),
@@ -237,11 +238,16 @@ class ProductResource extends Resource
                             ->schema([
                                 FileUpload::make('images_names')
                                     ->label('Images')
+                                    ->directory('product-images')
                                     ->preserveFilenames()
                                     ->image()
                                     ->reorderable()
                                     ->imageEditor()
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $livewire) {
+                                        $slug = ($livewire->data['slug']);
+                                        return $slug !== null || $slug !== '' ? (string)str($file->getClientOriginalName())->prepend($slug . '_') : (string)$file->getClientOriginalName();
+                                    }),
                             ])->columns(1),
 
                         Group::make()
@@ -249,14 +255,20 @@ class ProductResource extends Resource
                             ->schema([
                                 FileUpload::make('files_names')
                                     ->label('Files')
+                                    ->directory('product-files')
+                                    ->visibility('private')
                                     ->preserveFilenames()
                                     ->reorderable()
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $livewire) {
+                                        $slug = ($livewire->data['slug']);
+                                        return $slug !== null || $slug !== '' ? (string)str($file->getClientOriginalName())->prepend($slug . '_') : (string)$file->getClientOriginalName();
+                                    }),
                             ])->columns(1),
 
                         TextInput::make('stock')
                             ->numeric()
-                            ->minValue(1)
+                            ->minValue(0)
                             ->maxValue(100)
                             ->hidden(fn (Get $get): bool => $get('is_downloadable'))
                             ->disabled(fn (Get $get): bool => $get('is_downloadable')),
@@ -330,15 +342,15 @@ class ProductResource extends Resource
                     ->toggleable(),
 
                 TextColumn::make('price')
-                    ->placeholder(fn ($record) => $record->price ?? 'Free')
+                    ->placeholder(fn (Product $record) => $record->price ?? 'Free')
                     ->money('EUR'),
 
                 TextColumn::make('sale_price')
-                    ->placeholder(fn ($record) => $record->price ?? 'Free')
+                    ->placeholder(fn (Product $record) => $record->price ?? 'Free')
                     ->money('EUR'),
 
                 TextColumn::make('stock')
-                    ->placeholder(fn ($record) => $record->stock ?? '-')
+                    ->placeholder(fn (Product $record) => (int)$record->stock === 0 ? 'Out Stock' : $record->stock)
                     ->toggleable()
                     ->sortable(),
 

@@ -31,6 +31,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\PostResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\PostResource\RelationManagers;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PostResource extends Resource
 {
@@ -147,11 +148,16 @@ class PostResource extends Resource
                             ->schema([
                                 FileUpload::make('images_names')
                                     ->label('Images')
+                                    ->directory('post-images')
                                     ->preserveFilenames()
                                     ->image()
                                     ->reorderable()
                                     ->imageEditor()
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $livewire) {
+                                        $slug = ($livewire->data['slug']);
+                                        return $slug !== null || $slug !== '' ? (string)str($file->getClientOriginalName())->prepend($slug . '_') : (string)$file->getClientOriginalName();
+                                    }),
                             ])->columns(1),
 
                         Group::make()
@@ -159,9 +165,15 @@ class PostResource extends Resource
                             ->schema([
                                 FileUpload::make('files_names')
                                     ->label('Files')
+                                    ->directory('post-files')
+                                    ->visibility('private')
                                     ->preserveFilenames()
                                     ->reorderable()
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $livewire) {
+                                        $slug = ($livewire->data['slug']);
+                                        return $slug !== null || $slug !== '' ? (string)str($file->getClientOriginalName())->prepend($slug . '_') : (string)$file->getClientOriginalName();
+                                    }),
                             ])->columns(1),
 
                         Select::make('categories')
