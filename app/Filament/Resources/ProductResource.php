@@ -238,7 +238,11 @@ class ProductResource extends Resource
                             ->schema([
                                 FileUpload::make('images_names')
                                     ->label('Images')
-                                    ->directory('product-images')
+                                    ->directory(function ($livewire) {
+                                        $dir = 'product-images';
+                                        $subdir = $livewire->data['slug'];
+                                        return  $dir . DIRECTORY_SEPARATOR . $subdir;
+                                    })
                                     ->preserveFilenames()
                                     ->image()
                                     ->reorderable()
@@ -255,7 +259,11 @@ class ProductResource extends Resource
                             ->schema([
                                 FileUpload::make('files_names')
                                     ->label('Files')
-                                    ->directory('product-files')
+                                    ->directory(function ($livewire) {
+                                        $dir = 'product-files';
+                                        $subdir = $livewire->data['slug'];
+                                        return  $dir . DIRECTORY_SEPARATOR . $subdir;
+                                    })
                                     ->visibility('private')
                                     ->preserveFilenames()
                                     ->reorderable()

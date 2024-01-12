@@ -84,10 +84,13 @@ class ProductController extends Controller
         // Get the files associated with the product
         $files = $product->files->files_names;
 
+        // Get the slug
+        $slug = Str::slug($product->title);
+
         // Set the zip name
-        $zipFileName = 'files_' . Str::slug($product->title) . '.zip';
+        $zipFileName = 'files_' . $slug . '.zip';
 
         // Use the service to download files in a zip
-        return $this->zipDownloadService->downloadFilesInZip($files, $zipFileName, 'product');
+        return $this->zipDownloadService->downloadFilesInZip($files, $zipFileName, $slug, 'product');
     }
 }

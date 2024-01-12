@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Response;
 
 class ZipDownloadService
 {
-    public function downloadFilesInZip($files, $zipFileName, $fileType)
+    public function downloadFilesInZip($files, $zipFileName, $subdir, $fileType)
     {
 
         // Check if there are files and at least one file exists
@@ -21,14 +21,14 @@ class ZipDownloadService
         $zip = new ZipArchive;
 
         // Define the name and path of the ZIP file
-        $zipFilePath = storage_path('app/public/' . $zipFileName);
+        $zipFilePath = storage_path('app/public' . DIRECTORY_SEPARATOR . $zipFileName);
 
         // Open the ZIP file for creation or overwrite
         if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
             // Loop through each file associated with the product
             foreach ($files as $file) {
 
-                $filePath = storage_path('app/public/'. $fileType .'-files/' . basename($file));
+                $filePath = storage_path('app/public' . DIRECTORY_SEPARATOR . $fileType .'-files'  . DIRECTORY_SEPARATOR . $subdir  . DIRECTORY_SEPARATOR . basename($file));
 
                 // Check if the file exists before adding it to the ZIP
                 if (File::exists($filePath)) {
