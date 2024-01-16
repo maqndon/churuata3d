@@ -6,23 +6,22 @@ use App\Models\Product;
 use App\Models\SiteSetting;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
 
 class HomeController extends Controller
 {
+
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function show()
     {
-        //site settings
-        $siteSettings = SiteSetting::first();
+        $mostDownloadedProducts = $this->productService->getMostDownloaded(3);
 
-        //top downloaded products
-        $products = Product::where('status', 'published')->get();
-
-        $user = auth()->user()->name ?? 'guest';
-
-        return view('welcome', compact(
-            'user',
-            'siteSettings',
-            'products'
-        ));
+        return view('welcome', compact('mostDownloadedProducts'));
     }
 }

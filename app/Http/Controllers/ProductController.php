@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Support\Str;
 use App\Services\ZipDownloadService;
 use Illuminate\Http\Request;
@@ -13,17 +14,22 @@ class ProductController extends Controller
 {
 
     protected $zipDownloadService;
+    protected $productService;
 
-    public function __construct(ZipDownloadService $zipDownloadService)
+    public function __construct(ZipDownloadService $zipDownloadService, ProductService $productService)
     {
         $this->zipDownloadService = $zipDownloadService;
+        $this->productService = $productService;
     }
 
     public function show(Request $request, $slug)
     {
 
         //product
-        $product = Product::where('slug', $slug)->first();
+        $product = Product::with('images')
+            ->where('slug', $slug)
+            ->where('status', 'published')
+            ->first();
 
         //products printing material(s)
         $printingMaterials = $product->printing_materials()->pluck('name')->toArray();
@@ -48,6 +54,8 @@ class ProductController extends Controller
         $categoriesArray = $product->categories()->get();
         $categories = $categoriesArray->pluck('name');
 
+        $mostDownloadedProducts = $this->productService->getMostDownloaded(3);
+
         //common contents, for "all" products the same content
         // $common_content = DB::Table('product_common_content')->get();
         // $common_contents = [];
@@ -67,6 +75,7 @@ class ProductController extends Controller
             'licence',
             'tags',
             'categories',
+            'mostDownloadedProducts',
             // 'common_contents'
         ));
     }
@@ -76,16 +85,14 @@ class ProductController extends Controller
         dd(Product::find($record->id));
     }
 
-    public function downloadProductFiles($productId)
+    public function downloadProductFiles($slug)
     {
+
         // Find the product by ID
-        $product = Product::findOrFail($productId);
+        $product = Product::where('slug', $slug)->first();
 
         // Get the files associated with the product
         $files = $product->files->files_names;
-
-        // Get the slug
-        $slug = Str::slug($product->title);
 
         // Set the zip name
         $zipFileName = 'files_' . $slug . '.zip';
@@ -93,4 +100,5 @@ class ProductController extends Controller
         // Use the service to download files in a zip
         return $this->zipDownloadService->downloadFilesInZip($files, $zipFileName, $slug, 'product');
     }
+
 }
