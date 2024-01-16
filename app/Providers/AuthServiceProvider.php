@@ -21,6 +21,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        view()->composer('*', function ($view) {
+            $user = auth()->user();
+            $userName = $user ? $user->name : 'guest';
+            $view->with('userName', $userName);
+        });
     }
 }
