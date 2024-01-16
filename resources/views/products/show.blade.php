@@ -2,6 +2,7 @@
 
 @section('content')
 
+    {{ $product->slug }}
     @include('components.most-downloaded')
 
 @endsection
