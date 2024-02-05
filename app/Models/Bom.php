@@ -16,6 +16,7 @@ class Bom extends Model
     ];
 
     protected $casts = [
+        'qty' => 'array',
         'item' => 'array',
     ];
 
