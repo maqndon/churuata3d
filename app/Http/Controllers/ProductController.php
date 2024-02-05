@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Services\ProductService;
+use App\Services\BillOfMaterialService;
 use Illuminate\Support\Str;
-use App\Services\ZipDownloadService;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
+use App\Services\ProductCommonContentService;
+use App\Services\ZipDownloadService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -15,90 +17,65 @@ class ProductController extends Controller
 
     protected $zipDownloadService;
     protected $productService;
+    protected $productCommonContent;
+    protected $billOfMaterials;
 
-    public function __construct(ZipDownloadService $zipDownloadService, ProductService $productService)
+    public function __construct(ZipDownloadService $zipDownloadService, ProductService $productService, ProductCommonContentService $productCommonContent, BillOfMaterialService $billOfMaterials)
     {
         $this->zipDownloadService = $zipDownloadService;
         $this->productService = $productService;
+        $this->productCommonContent = $productCommonContent;
+        $this->billOfMaterials = $billOfMaterials;
     }
 
     public function show(Request $request, $slug)
     {
 
         //product
-        $product = Product::with('images')
+        $product = Product::with(['images','licence', 'tags', 'categories', 'print_settings', 'files'])
             ->where('slug', $slug)
             ->where('status', 'published')
             ->first();
 
-        //products printing material(s)
-        $printingMaterials = $product->printing_materials()->pluck('name')->toArray();
+        //product common contents
+        $commonContent =  $this->productCommonContent->getProductCommonContent();
 
-        // dd($printing_materials);
+        // Count the number of images associated with the product
+        $totalImages = collect($product->images->images_names)->count();
 
-        //product print settings
-        $printSettings = $product->print_settings()->get();
+        //related parametric product
+        $relatedParametric = $this->productService->getParametric($slug);
 
-        //bill of materials
-        $bom = $product->bill_of_materials()->get();
-        $billOfMaterials = count($bom) != 0  ? $bom->pluck('item') : false;
-
-        //product licence
-        $licence = $product->licence()->first();
-
-        //product tags
-        $tagsArray = $product->tags()->get();
-        $tags = $tagsArray->pluck('slug');
-
-        //product categories
-        $categoriesArray = $product->categories()->get();
-        $categories = $categoriesArray->pluck('name');
-
+        //most downloaded products
         $mostDownloadedProducts = $this->productService->getMostDownloaded(3);
 
-        //common contents, for "all" products the same content
-        // $common_content = DB::Table('product_common_content')->get();
-        // $common_contents = [];
-
-        // foreach ($common_content as $content) {
-        //     $common_contents[$content->type] = $content->content;
-        // }
+        //bill of materials
+        $billOfMaterials = $this->billOfMaterials->getBillOfMaterials('App\Models\Product', $product->id);
 
         //related products
+        $relatedProducts = $this->productService->getRelatedProducts($product);
 
         return view('products.show', compact(
             'product',
-            // 'downloads',
-            'printSettings',
-            'printingMaterials',
-            'billOfMaterials',
-            'licence',
-            'tags',
-            'categories',
             'mostDownloadedProducts',
-            // 'common_contents'
+            'totalImages',
+            'commonContent',
+            'billOfMaterials',
+            'relatedProducts',
+            'relatedParametric'
         ));
-    }
-
-    public function is_free($record)
-    {
-        dd(Product::find($record->id));
     }
 
     public function downloadProductFiles($slug)
     {
 
-        // Find the product by ID
-        $product = Product::where('slug', $slug)->first();
-
-        // Get the files associated with the product
-        $files = $product->files->files_names;
+        $fileNames = $this->productService->getFileNames($slug);
 
         // Set the zip name
         $zipFileName = 'files_' . $slug . '.zip';
 
         // Use the service to download files in a zip
-        return $this->zipDownloadService->downloadFilesInZip($files, $zipFileName, $slug, 'product');
+        return $this->zipDownloadService->downloadFilesInZip($fileNames, $zipFileName, $slug, 'product');
     }
 
 }
