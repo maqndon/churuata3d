@@ -110,7 +110,7 @@ class ProductResource extends Resource
                             ->columnSpanFull(),
 
                         Repeater::make('bill_of_materials')
-                            ->relationship('bill_of_materials')
+                            ->relationship()
                             ->schema([
                                 TextInput::make('qty')
                                     ->numeric()
@@ -123,6 +123,10 @@ class ProductResource extends Resource
                                     ->minLength(3),
                             ])
                             ->addActionLabel('Add new item')
+                            ->defaultItems(0)
+                            ->cloneable()
+                            ->reorderable()
+                            ->reorderableWithDragAndDrop()
                             ->columnSpanFull()
                             ->columns(2)
                     ])
@@ -223,9 +227,11 @@ class ProductResource extends Resource
                             ->schema([
 
                                 TextInput::make('title')
-                                    ->label('SEO Title'),
+                                    ->label('SEO Title')
+                                    ->required(),
 
-                                Textarea::make('meta_description'),
+                                Textarea::make('meta_description')
+                                    ->required(),
 
                                 TagsInput::make('meta_keywords')
                                     ->placeholder('New meta keyword')
@@ -248,6 +254,8 @@ class ProductResource extends Resource
                                     ->reorderable()
                                     ->imageEditor()
                                     ->multiple()
+                                    ->minFiles(2)
+                                    ->maxFiles(4)
                                     ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $livewire) {
                                         $slug = ($livewire->data['slug']);
                                         return $slug !== null || $slug !== '' ? (string)str($file->getClientOriginalName())->prepend($slug . '_') : (string)$file->getClientOriginalName();
