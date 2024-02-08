@@ -11,11 +11,7 @@ class SocialMedia extends Model
     use HasFactory;
 
     protected $fillable = [
-        'url'
+        'name'
     ];
 
-    public function siteSettingsSocialMedia(): HasMany
-    {
-        return $this->hasMany(SiteSettingSocialMedia::class);
-    }
 }
