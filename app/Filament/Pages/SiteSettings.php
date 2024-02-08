@@ -89,7 +89,12 @@ class SiteSettings extends Page implements HasForms
                                         Select::make('social_media_id')
                                             ->label('Social Media')
                                             ->required()
-                                            ->options(SocialMedia::all()->pluck('name', 'id'))
+                                            ->getOptionLabelUsing(fn ($value): ?string => SocialMedia::find($value)?->name)
+                                            ->options(function () {
+                                                $existingSocialMediaNames = SiteSetting::first()->social_media->pluck('id')->toArray();
+                                                $availableSocialMedia = SocialMedia::whereNotIn('id', $existingSocialMediaNames)->get();
+                                                return $availableSocialMedia->pluck('name', 'id')->toArray();
+                                            })
                                             ->searchable(),
                                         TextInput::make('url')
                                             ->prefix('https://')
@@ -132,7 +137,7 @@ class SiteSettings extends Page implements HasForms
 
             // Create an array to store only the IDs of the social media
             $socialMediaIds = [];
-            
+
             foreach ($socialMediaData as $socialMediaItem) {
                 // Add the social media ID to the array
                 $socialMediaIds[] = $socialMediaItem['social_media_id'];
