@@ -21,6 +21,7 @@ class ChuruataDatabaseSeeder extends Seeder
             PrintingMaterialSeeder::class,
             PrintSettingSeeder::class,
             ProductCommonContentSeeder::class,
+            SocialMediaSeeder::class,
         ]);
     }
 }
