@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\SiteSetting;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use PhpParser\Node\Expr\Cast\Array_;
 
@@ -27,7 +28,7 @@ class ProductService
 
     public static function getFileNames($slug): Array
     {
-        // Find the product by ID
+        // Find the product by Slug
         $product = self::getProduct($slug);
 
         // Get the files associated with the product
@@ -59,5 +60,14 @@ class ProductService
 
         return $relatedProducts;
     }
+
+    public function setDownload($slug)
+    {
+        $downloads = self::getProduct($slug)->downloads;
+        $downloads++;
+        $downloads = self::getProduct($slug)->update(['downloads' => $downloads]);
+        return $downloads;
+    } 
+
 
 }
