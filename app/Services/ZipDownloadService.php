@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Response;
 
 class ZipDownloadService
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function downloadFilesInZip($files, $zipFileName, $subdir, $fileType)
     {
 
@@ -43,6 +50,8 @@ class ZipDownloadService
 
             // Check if the ZIP file was created successfully
             if ($zip->status === 0) {
+                // Increase downloads by 1
+                $this->productService->setDownload($subdir);
                 // Download the ZIP file and delete it after sending
                 return response()->download($zipFilePath)->deleteFileAfterSend();
             } else {
@@ -52,6 +61,5 @@ class ZipDownloadService
             // Handle the case where the ZIP file couldn't be opened
             return response()->json(['error' => 'Unable to open ZIP file'], 500);
         }
-
     }
 }
