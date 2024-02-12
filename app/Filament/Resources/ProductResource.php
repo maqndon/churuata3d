@@ -366,7 +366,17 @@ class ProductResource extends Resource
                     ->money('EUR'),
 
                 TextColumn::make('stock')
-                    ->placeholder(fn (Product $record) => (int)$record->stock === 0 ? 'Out Stock' : $record->stock)
+                    ->placeholder(
+                        function (Product $record) {
+                            if ((int)$record->stock === 0 && !$record->is_downloadable){
+                                return 'Out Stock';
+                            }elseif((int)$record->is_downloadable){
+                                return '-';
+                            }else{
+                                return $record->stock;
+                            }
+                        } 
+                        )
                     ->toggleable()
                     ->sortable(),
 
