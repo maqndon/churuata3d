@@ -2,17 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Bom;
-use App\Models\Seo;
-use App\Models\Tag;
 use App\Models\User;
 use App\Models\Licence;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\PrintingMaterial;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use App\Models\PrintSupportRaft;
 use Illuminate\Support\Facades\DB;
 
 class ImportWoocommerceProducts extends Command
@@ -47,9 +42,6 @@ class ImportWoocommerceProducts extends Command
         // Load the XML file
         $xml = simplexml_load_file($xmlFilePath);
 
-        //Model
-        $model = Product::class;
-
         // Iterate over each product in the XML
         foreach ($xml->children() as $productData) {
             // Extract product attributes from XML
@@ -81,8 +73,6 @@ class ImportWoocommerceProducts extends Command
 
             // Remove <excerpt> tags using regex
             $excerpt = preg_replace('/<excerpt>(.*?)<\/excerpt>/s', '$1', $excerpt);
-
-            $images = explode(',', (string) $productData->images);
 
             $materials = $productData->Print_Settings->materials;
             $settings = $productData->Print_Settings->settings;
@@ -136,6 +126,10 @@ class ImportWoocommerceProducts extends Command
                 if ($metaKey === 'downloads') {
                     $downloads = $metaValue;
                 }
+
+                if ($metaKey === 'product_image_gallery') {
+                    $images = explode(',', $metaValue);
+                }
             }
 
             // Create a new product entry
@@ -172,9 +166,15 @@ class ImportWoocommerceProducts extends Command
                     // Check if the item is not already in $dataBom
                     if (!in_array($item, $dataBom)) {
 
-                        $dataBom['item'] = $item;
-                        $newProduct->bill_of_materials()->create($dataBom);
+                        if (preg_match('/\((\d+)\)\s*(.*)/', $item, $matches)) {
+                            $dataBom['qty'] = $matches[1];
+                            $dataBom['item'] = $matches[2];
+                        } else {
+                            $dataBom['qty'] = "1";
+                            $dataBom['item'] = $item;
+                        }
 
+                        $newProduct->bill_of_materials()->create($dataBom);
                     }
                 }
             }
@@ -190,11 +190,10 @@ class ImportWoocommerceProducts extends Command
             }
 
             // Product supports raft
-            $supportRaft = new PrintSupportRaft();
-            $supportRaft->product_id = $newProduct->id;
-            $supportRaft->has_supports = (bool)$supports;
-            $supportRaft->has_raft = (bool)$raft;
-            $supportRaft->save();
+            $newProduct->print_supports_rafts()->create([
+                'has_supports' => (bool)$supports,
+                'has_raft' => (bool)$raft,
+            ]);
 
             $this->info("Product imported: $title");
 
@@ -204,7 +203,7 @@ class ImportWoocommerceProducts extends Command
                 $categoryName = (string) $category;
 
                 if ($domain === 'product_tag') {
-                    $tag = Tag::firstOrCreate([
+                    $tag = $newProduct->tags()->firstOrCreate([
                         'name' => $categoryName,
                         'slug' => Str::of($categoryName)->slug(),
                     ]);
@@ -239,28 +238,28 @@ class ImportWoocommerceProducts extends Command
             }
 
             // Create SEO entry for the product
-            $seo = new Seo();
-            $seo->seoable_type = $model;
-            $seo->seoable_id = $newProduct->id;
-            $seo->title = $seoTitle != null ? $seoTitle : '';
-            $seo->meta_description = $metaDescription != null ? $metaDescription : '';
-            $seo->meta_keywords = $metaKeywords != null ? $metaKeywords : '';
-            $seo->save();
-
+            $newProduct->seos()->create([
+                'title' => $seoTitle != null ? $seoTitle : '',
+                'meta_description' => $metaDescription != null ? $metaDescription : '',
+                'meta_keywords' => $metaKeywords != null ? $metaKeywords : '',
+            ]);
 
             // Handle product images
-            //     foreach ($images as $imageUrl) {
-            //         // Download the image
-            //         $imageName = basename($imageUrl);
-            //         $imageContents = file_get_contents($imageUrl);
-            //         $storagePath = 'products/' . $imageName;
-            //         Storage::disk('public')->put($storagePath, $imageContents);
+            if ($images) {
 
-            //         // Save the image path
-            //         $newProduct->addMedia(storage_path('app/public/' . $storagePath))
-            //             ->usingName($imageName)
-            //             ->toMediaCollection('images');
-            //     }
+                $dir = "product-images\\";
+
+                $imagesArray = [];
+
+                foreach ($images as $image) {
+                    $imagesArray[] = $dir.$newProduct->title.DIRECTORY_SEPARATOR.$image;
+                }
+                
+                $newProduct->images()->create([
+                    'images_names' => $imagesArray
+                ]);
+
+            }
         }
 
         $this->info('Import completed.');
