@@ -48,7 +48,7 @@ class ImportWoocommerceProducts extends Command
             $title = (string) $productData->title;
             $slug = (string) $productData->post_name;
             $sku = (string) $productData->post_name;
-            $stock = (int) $productData->stock;
+            $stock = $productData->stock ? (int) $productData->stock: null;
             $creator = (string) $productData->creator;
             // Find the user by name and associate the product with them
             $creator_user = User::where('name', $creator)->first();
