@@ -3,14 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Models\Bom;
-use App\Models\Category;
 use App\Models\Seo;
 use App\Models\Tag;
-use App\Models\Sale;
 use App\Models\User;
 use App\Models\Licence;
-use App\Models\PrintingMaterial;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\PrintingMaterial;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use App\Models\PrintSupportRaft;
@@ -49,7 +48,7 @@ class ImportWoocommerceProducts extends Command
         $xml = simplexml_load_file($xmlFilePath);
 
         //Model
-        $model = 'App\Models\Product';
+        $model = Product::class;
 
         // Iterate over each product in the XML
         foreach ($xml->children() as $productData) {
@@ -95,14 +94,6 @@ class ImportWoocommerceProducts extends Command
             // Product licence
             $licence = $productData->licence;
             $licence_id = Licence::where('name', $licence)->value('id');
-
-            // Extract Data inside the postmeta tags
-
-            // $metaDescription = null;
-            // $seoTitle = null;
-            // price = null;
-            // $salePrice = null;
-            // $is_downloadable = null;
 
             foreach ($productData->postmeta as $meta) {
                 $metaKey = (string) $meta->meta_key;
@@ -167,10 +158,6 @@ class ImportWoocommerceProducts extends Command
             $newProduct->downloads = $downloads;
             $newProduct->save();
 
-            // $product = Product::where('slug', $newProduct->slug)->first();
-            // dd($product->id);
-            // $product->bill_of_materials()->save($product, $productData->bill_of_materials);
-
             // Product's Bill of Materials (BOM)
             $bill_of_materials = $productData->bill_of_materials;
 
@@ -184,26 +171,23 @@ class ImportWoocommerceProducts extends Command
 
                     // Check if the item is not already in $dataBom
                     if (!in_array($item, $dataBom)) {
-                        $dataBom[] = $item;
 
-                        // Insert data into the table
-                        $newBom = new Bom();
-                        $newBom->bomable_id = $newProduct->id;
-                        $newBom->bomable_type = $model;
-                        $newBom->qty = null;
-                        $newBom->item = $item;
-                        $newBom->save();
+                        $dataBom['item'] = $item;
+                        $newProduct->bill_of_materials()->create($dataBom);
+
                     }
                 }
             }
 
+            // Product printing materials
             if ($materials) {
-                // Product printing materials
                 $this->storePivot($newProduct->id, 'printing_material_id', 'name', $materials, 'printing_material_product', 'printing_materials');
             }
 
             // Product printing settings
-            $this->storePivot($newProduct->id, 'print_setting_id', 'print_strength', $settings, 'print_setting_product', 'print_settings');
+            if ($settings) {
+                $this->storePivot($newProduct->id, 'print_setting_id', 'print_strength', $settings, 'print_setting_product', 'print_settings');
+            }
 
             // Product supports raft
             $supportRaft = new PrintSupportRaft();
