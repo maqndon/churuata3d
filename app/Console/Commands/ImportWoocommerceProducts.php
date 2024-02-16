@@ -208,7 +208,7 @@ class ImportWoocommerceProducts extends Command
                         'slug' => Str::of($categoryName)->slug(),
                     ]);
 
-                    if ($tag) {
+                    if (!$newProduct->tags()->where('tags.id', $tag->id)->exists()) {
                         // Attach the existing tag to the product
                         $newProduct->tags()->attach($tag->id);
                     }
