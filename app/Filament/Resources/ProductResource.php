@@ -272,6 +272,7 @@ class ProductResource extends Resource
                                         $subdir = $livewire->data['slug'];
                                         return  $dir . DIRECTORY_SEPARATOR . $subdir;
                                     })
+                                    ->disk('local')
                                     ->visibility('private')
                                     ->preserveFilenames()
                                     ->reorderable()
