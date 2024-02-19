@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -48,7 +49,41 @@ class Product extends Model
 
         $this->attributes['created_by'] = auth()->id();
     }
-    
+
+    protected static function booted(): void
+    {
+        self::deleted(function (Product $product) {
+
+            // First delete stored images in the disk and then the database entries
+            $images = $product->images->images_names;
+            foreach ($images as $image) {
+                Storage::disk('public')->delete($image);
+            }
+
+            $files = $product->files->files_names;
+            foreach ($files as $file) {
+                Storage::disk('local')->delete($file);
+            }
+            
+            // delete all Polymorphic Relationships
+            if ($product->images) {
+                $product->images->delete();
+            }
+
+            if ($product->files) {
+                $product->files->delete();
+            }
+
+            if ($product->bill_of_materials) {
+                $product->bill_of_materials->delete();
+            }
+
+            if ($product->seos) {
+                $product->seos->delete();
+            }
+        });
+    }
+
     public function getDownloadCountAttribute()
     {
         return $this->downloads;
