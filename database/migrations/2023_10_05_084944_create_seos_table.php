@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('seoable_type', ['App\\\Models\\\Post', 'App\\\Models\\\Product'])->default('App\\\Models\\\Product');
             $table->unsignedBigInteger('seoable_id');
-            $table->string('title');
+            $table->string('title')->unique();
             $table->string('meta_description');
             $table->json('meta_keywords')->nullable();
             $table->timestamps();
