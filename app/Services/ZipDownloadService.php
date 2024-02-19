@@ -3,9 +3,8 @@
 namespace App\Services;
 
 use ZipArchive;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ZipDownloadService
 {
@@ -27,15 +26,19 @@ class ZipDownloadService
         // Create a new ZipArchive instance
         $zip = new ZipArchive;
 
+        //local, public, etc
+        $disk = basename(Storage::disk('local')->path(''));
+
         // Define the name and path of the ZIP file
-        $zipFilePath = storage_path('app/public' . DIRECTORY_SEPARATOR . $zipFileName);
+        $zipFilePath = storage_path($disk . DIRECTORY_SEPARATOR . $zipFileName);
+
 
         // Open the ZIP file for creation or overwrite
         if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
             // Loop through each file associated with the product
             foreach ($files as $file) {
 
-                $filePath = storage_path('app/public' . DIRECTORY_SEPARATOR . $fileType .'-files'  . DIRECTORY_SEPARATOR . $subdir  . DIRECTORY_SEPARATOR . basename($file));
+                $filePath = storage_path($disk . DIRECTORY_SEPARATOR . $fileType .'-files'  . DIRECTORY_SEPARATOR . $subdir  . DIRECTORY_SEPARATOR . basename($file));
 
                 // Check if the file exists before adding it to the ZIP
                 if (File::exists($filePath)) {
