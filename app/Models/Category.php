@@ -15,17 +15,4 @@ class Category extends Model
         'slug'
     ];
 
-    protected $casts = [
-        'categories' => 'array',
-    ];
-
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(Product::class);
-    }
-
-    public function posts(): BelongsToMany
-    {
-        return $this->belongsToMany(Post::class);
-    }
 }

@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -52,7 +54,7 @@ class Product extends Model
 
     protected static function booted(): void
     {
-        self::deleted(function (Product $product) {
+        self::deleting(function (Product $product) {
 
             // First delete stored images in the disk and then the database entries
             $images = $product->images->images_names;
@@ -75,7 +77,9 @@ class Product extends Model
             }
 
             if ($product->bill_of_materials) {
-                $product->bill_of_materials->delete();
+                foreach($product->bill_of_materials as $bom){
+                    $bom->delete();
+                }
             }
 
             if ($product->seos) {
@@ -94,14 +98,14 @@ class Product extends Model
         return $this->image ?? 'no_image.svg';
     }
 
-    public function categories(): BelongsToMany
+    public function categories(): MorphToMany
     {
-        return $this->belongsToMany(Category::class);
+        return $this->morphToMany(Category::class, 'categoryable');
     }
 
-    public function tags(): BelongsToMany
+    public function tags(): MorphToMany
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->morphToMany(Tag::class, 'tagable');
     }
 
     public function sales(): HasMany
@@ -129,9 +133,9 @@ class Product extends Model
         return $this->belongsTo(Licence::class);
     }
 
-    public function bill_of_materials(): MorphOne
+    public function bill_of_materials(): MorphMany
     {
-        return $this->morphOne(Bom::class, 'bomable');
+        return $this->morphMany(Bom::class, 'bomable');
     }
 
     public function created_by(): BelongsTo
