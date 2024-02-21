@@ -82,6 +82,18 @@ class Product extends Model
                 }
             }
 
+            if ($product->categories) {
+                foreach($product->categories as $category){
+                    $category->delete();
+                }
+            }
+
+            if ($product->tags) {
+                foreach($product->tags as $tag){
+                    $tag->delete();
+                }
+            }
+
             if ($product->seos) {
                 $product->seos->delete();
             }
