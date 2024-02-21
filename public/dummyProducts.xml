@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<items>
+    <item>
+        <title>Product 1</title>
+        <link>https://example.com/product1</link>
+        <creator>admin</creator>
+        <Print_Settings>
+            <materials>PETG,PLA</materials>
+            <raft>no</raft>
+            <supports>yes</supports>
+            <settings>low</settings>
+        </Print_Settings>
+        <content>Product 1 description goes here.</content>
+        <excerpt>A short excerpt for Product 1.</excerpt>
+        <bill_of_materials>
+            <li>(2) Wall screws.</li>
+            <li>(2) Wall plugs.</li>
+        </bill_of_materials>
+        <licence>by-nc-sa</licence>
+        <post_date>2018-09-22 20:47:44</post_date>
+        <post_modified>2020-09-23 12:43:36</post_modified>
+        <post_name>product-1</post_name>
+        <status>PUBLISHED</status>
+        <post_type>product</post_type>
+        <category domain="product_cat">3D Models</category>
+        <category domain="product_tag">Tag1</category>
+        <category domain="product_tag">Tag2</category>
+        <category domain="product_tag">Tag3</category>
+        <category domain="product_visibility">featured</category>
+        <postmeta>
+            <meta_key>sku</meta_key>
+            <meta_value>SKU001</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>sale_price</meta_key>
+            <meta_value>19.99</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>weight</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>length</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>width</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>height</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>downloadable</meta_key>
+            <meta_value>yes</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>product_image_gallery</meta_key>
+            <meta_value>product1-image1.jpg,product1-image2.jpg</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>stock</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>downloadable_files</meta_key>
+            <meta_value>product1-file1.pdf,product1-file2.zip</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>price</meta_key>
+            <meta_value>29.99</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>downloads</meta_key>
+            <meta_value>412</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>seo_title</meta_key>
+            <meta_value>Product 1 SEO Title</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>meta_description</meta_key>
+            <meta_value>Product 1 meta description.</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>focus_keyword</meta_key>
+            <meta_value>Keyword1, Keyword2</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>permalink</meta_key>
+            <meta_value>product-1-permalink</meta_value>
+        </postmeta>
+    </item>
+    <item>
+        <title>Product 2</title>
+        <link>https://example.com/product1</link>
+        <creator>admin</creator>
+        <Print_Settings>
+            <materials>PLA</materials>
+            <raft>no</raft>
+            <supports>yes</supports>
+            <settings>high</settings>
+        </Print_Settings>
+        <content>Product 2 description goes here.</content>
+        <excerpt>A short excerpt for Product 2.</excerpt>
+        <bill_of_materials>
+            <li>(5) Wood screews.</li>
+            <li>18mm thickness wood.</li>
+        </bill_of_materials>
+        <licence>by-nc-sa</licence>
+        <post_date>2018-09-22 20:47:44</post_date>
+        <post_modified>2020-09-23 12:43:36</post_modified>
+        <post_name>product-2</post_name>
+        <status>PUBLISHED</status>
+        <post_type>product</post_type>
+        <category domain="product_cat">3D Models</category>
+        <category domain="product_tag">Tag1</category>
+        <category domain="product_tag">Tag2</category>
+        <category domain="product_tag">Tag3</category>
+        <category domain="product_visibility">featured</category>
+        <postmeta>
+            <meta_key>sku</meta_key>
+            <meta_value>SKU002</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>sale_price</meta_key>
+            <meta_value>19.99</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>weight</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>length</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>width</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>height</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>downloadable</meta_key>
+            <meta_value>yes</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>product_image_gallery</meta_key>
+            <meta_value>product2-image1.jpg,product2-image2.jpg</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>stock</meta_key>
+            <meta_value></meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>downloadable_files</meta_key>
+            <meta_value>product2-file1.pdf,product2-file2.zip</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>price</meta_key>
+            <meta_value>29.99</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>downloads</meta_key>
+            <meta_value>254</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>seo_title</meta_key>
+            <meta_value>Product 2 SEO Title</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>meta_description</meta_key>
+            <meta_value>Product 2 meta description.</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>focus_keyword</meta_key>
+            <meta_value>Keyword1, Keyword2</meta_value>
+        </postmeta>
+        <postmeta>
+            <meta_key>permalink</meta_key>
+            <meta_value>product-2-permalink</meta_value>
+        </postmeta>
+    </item>
+</items>
