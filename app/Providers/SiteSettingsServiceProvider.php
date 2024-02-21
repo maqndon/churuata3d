@@ -13,10 +13,17 @@ class SiteSettingsServiceProvider extends ServiceProvider
     public function register(): void
     {
         view()->composer('*', function ($view) {
-            $siteSettings = SiteSetting::first() ?? new SiteSetting();
-            $socialMedias = SiteSetting::first()->social_media->toArray();
+            $siteSetting = SiteSetting::first();
+            $socialMedias = [];
+        
+            if ($siteSetting !== null) {
+                $socialMedias = $siteSetting->social_media->toArray();
+            } else {
+                $siteSetting = new SiteSetting();
+            }
+        
             $view->with([
-                'siteSettings' => $siteSettings,
+                'siteSettings' => $siteSetting,
                 'socialMedias' => $socialMedias
             ]);
         });
