@@ -32,16 +32,18 @@ class SiteSettings extends Page implements HasForms
     public function mount(): void
     {
         $siteSetting = SiteSetting::first() ?? NULL;
+        $socialMedia = $siteSetting->social_media ?? NULL;
 
-        $socialMedia = $siteSetting->social_media;
-        $socialMedia = $socialMedia->map(function ($item) {
-            return [
-                'site_setting_social_media_id' => $item->pivot->id,
-                'site_setting_id' => $item->pivot->site_setting_id,
-                'social_media_id' => $item->pivot->social_media_id,
-                'url' => $item->pivot->url,
-            ];
-        })->toArray() ?? NULL;
+        if ($socialMedia) {
+            $socialMedia = $socialMedia->map(function ($item) {
+                return [
+                    'site_setting_social_media_id' => $item->pivot->id,
+                    'site_setting_id' => $item->pivot->site_setting_id,
+                    'social_media_id' => $item->pivot->social_media_id,
+                    'url' => $item->pivot->url,
+                ];
+            })->toArray() ?? NULL;
+        }
 
         $data = [
             'company_name' => $siteSetting ? $siteSetting->company_name : null,
