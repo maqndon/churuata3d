@@ -4,13 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Services\BillOfMaterialService;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Services\ProductService;
 use App\Services\ProductCommonContentService;
 use App\Services\ZipDownloadService;
-use Illuminate\Support\Facades\File;
-use Illuminate\Database\Eloquent\Collection;
 
 class ProductController extends Controller
 {
@@ -31,39 +28,43 @@ class ProductController extends Controller
     public function show(Request $request, $slug)
     {
 
-        //product
-        $product = Product::with(['images','licence', 'tags', 'categories', 'print_settings', 'files'])
-            ->where('slug', $slug)
-            ->where('status', 'published')
-            ->first();
+        try {
+            //product
+            $product = Product::with(['images', 'licence', 'tags', 'categories', 'print_settings', 'files'])
+                ->where('slug', $slug)
+                ->where('status', 'published')
+                ->first();
 
-        //product common contents
-        $commonContent =  $this->productCommonContent->getProductCommonContent();
+            //product common contents
+            $commonContent =  $this->productCommonContent->getProductCommonContent();
 
-        // Count the number of images associated with the product
-        $totalImages = collect($product->images->images_names)->count();
+            // Count the number of images associated with the product
+            $totalImages = collect($product->images->images_names)->count();
 
-        //related parametric product
-        $relatedParametric = $this->productService->getParametric($slug);
+            //related parametric product
+            $relatedParametric = $this->productService->getParametric($slug);
 
-        //most downloaded products
-        $mostDownloadedProducts = $this->productService->getMostDownloaded(3);
+            //most downloaded products
+            $mostDownloadedProducts = $this->productService->getMostDownloaded(3);
 
-        //bill of materials
-        $billOfMaterials = $this->billOfMaterials->getBillOfMaterials('App\Models\Product', $product->id);
+            //bill of materials
+            $billOfMaterials = $this->billOfMaterials->getBillOfMaterials('App\Models\Product', $product->id);
 
-        //related products
-        $relatedProducts = $this->productService->getRelatedProducts($product);
+            //related products
+            $relatedProducts = $this->productService->getRelatedProducts($product);
 
-        return view('products.show', compact(
-            'product',
-            'mostDownloadedProducts',
-            'totalImages',
-            'commonContent',
-            'billOfMaterials',
-            'relatedProducts',
-            'relatedParametric'
-        ));
+            return view('products.show', compact(
+                'product',
+                'mostDownloadedProducts',
+                'totalImages',
+                'commonContent',
+                'billOfMaterials',
+                'relatedProducts',
+                'relatedParametric'
+            ));
+        } catch (\Throwable $th) {
+            abort(404);
+        }
     }
 
     public function downloadProductFiles($slug)
@@ -77,5 +78,4 @@ class ProductController extends Controller
         // Use the service to download files in a zip
         return $this->zipDownloadService->downloadFilesInZip($fileNames, $zipFileName, $slug, 'product');
     }
-
 }
