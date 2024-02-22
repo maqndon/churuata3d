@@ -8,6 +8,7 @@ use App\Traits\BillOfMaterials;
 use App\Services\ProductService;
 use App\Services\ZipDownloadService;
 use App\Services\ProductCommonContentService;
+use App\Traits\DownloadFiles;
 
 class ProductController extends Controller
 {
@@ -17,6 +18,7 @@ class ProductController extends Controller
     protected $productCommonContent;
 
     use BillOfMaterials;
+    use DownloadFiles;
     
     public function __construct(ZipDownloadService $zipDownloadService, ProductService $productService, ProductCommonContentService $productCommonContent)
     {
@@ -67,15 +69,4 @@ class ProductController extends Controller
         }
     }
 
-    public function downloadProductFiles($slug)
-    {
-
-        $fileNames = $this->productService->getFileNames($slug);
-
-        // Set the zip name
-        $zipFileName = 'files_' . $slug . '.zip';
-
-        // Use the service to download files in a zip
-        return $this->zipDownloadService->downloadFilesInZip($fileNames, $zipFileName, $slug, 'product');
-    }
 }
