@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Services\BillOfMaterialService;
 use Illuminate\Http\Request;
+use App\Traits\BillOfMaterials;
 use App\Services\ProductService;
-use App\Services\ProductCommonContentService;
 use App\Services\ZipDownloadService;
+use App\Services\ProductCommonContentService;
 
 class ProductController extends Controller
 {
@@ -15,14 +15,14 @@ class ProductController extends Controller
     protected $zipDownloadService;
     protected $productService;
     protected $productCommonContent;
-    protected $billOfMaterials;
 
-    public function __construct(ZipDownloadService $zipDownloadService, ProductService $productService, ProductCommonContentService $productCommonContent, BillOfMaterialService $billOfMaterials)
+    use BillOfMaterials;
+    
+    public function __construct(ZipDownloadService $zipDownloadService, ProductService $productService, ProductCommonContentService $productCommonContent)
     {
         $this->zipDownloadService = $zipDownloadService;
         $this->productService = $productService;
         $this->productCommonContent = $productCommonContent;
-        $this->billOfMaterials = $billOfMaterials;
     }
 
     public function show(Request $request, $slug)
@@ -48,8 +48,8 @@ class ProductController extends Controller
             $mostDownloadedProducts = $this->productService->getMostDownloaded(3);
 
             //bill of materials
-            $billOfMaterials = $this->billOfMaterials->getBillOfMaterials('App\Models\Product', $product->id);
-
+            $billOfMaterials = $this->getBillOfMaterials(Product::class, $product->id);
+            
             //related products
             $relatedProducts = $this->productService->getRelatedProducts($product);
 
