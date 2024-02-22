@@ -56,41 +56,36 @@ class Product extends Model
     {
         self::deleting(function (Product $product) {
 
-            // First delete stored images in the disk and then the database entries
-            $images = $product->images->images_names;
-            foreach ($images as $image) {
-                Storage::disk('public')->delete($image);
-            }
-
-            $files = $product->files->files_names;
-            foreach ($files as $file) {
-                Storage::disk('local')->delete($file);
-            }
-            
             // delete all Polymorphic Relationships
             if ($product->images) {
+                // First delete stored images in the disk
+                $imagesDir = dirname($product->images->images_names[0]);
+                Storage::disk('public')->deleteDirectory($imagesDir);
+                //delete database's entries 
                 $product->images->delete();
             }
 
             if ($product->files) {
+                $filesDir = dirname($product->files->files_names[0]);
+                Storage::disk('local')->deleteDirectory($filesDir);
                 $product->files->delete();
             }
 
             if ($product->bill_of_materials) {
-                foreach($product->bill_of_materials as $bom){
+                foreach ($product->bill_of_materials as $bom) {
                     $bom->delete();
                 }
             }
 
             if ($product->categories) {
-                foreach($product->categories as $category){
-                    $category->delete();
+                foreach ($product->categories as $category) {
+                    $product->categories()->detach($category->id);
                 }
             }
 
             if ($product->tags) {
-                foreach($product->tags as $tag){
-                    $tag->delete();
+                foreach ($product->tags as $tag) {
+                    $product->tags()->detach($tag->id);
                 }
             }
 
@@ -112,7 +107,7 @@ class Product extends Model
 
     public function categories(): MorphToMany
     {
-        return $this->morphToMany(Category::class, 'categoryable');
+        return $this->morphToMany(Category::class, 'categorizable');
     }
 
     public function tags(): MorphToMany

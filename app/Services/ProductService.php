@@ -48,12 +48,12 @@ class ProductService
     public function getRelatedProducts(Product $product)
     {
         $relatedProducts = Product::with('images')
-            ->where('id', '<>', $product->id)
+            ->where('products.id', '<>', $product->id)
             ->whereHas('categories', function ($query) use ($product) {
-                $query->whereIn('id', $product->categories()->pluck('id'));
+                $query->whereIn('categories.id', $product->categories()->pluck('category_id'));
             })
             ->WhereHas('tags', function ($query) use ($product) {
-                $query->whereIn('id', $product->tags()->pluck('id'));
+                $query->whereIn('tags.id', $product->tags()->pluck('tag_id'));
             })
             ->take(4)
             ->get();
