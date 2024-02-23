@@ -19,8 +19,11 @@ use App\Http\Controllers\ProductController;
 //     return view('welcome');
 // });
 
-Route::get('/',[HomeController::class, 'show'])->name(('welcome'));
+Route::get('/',[HomeController::class, 'show'])
+    ->name(('welcome'));
 
-Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+Route::resource('products', ProductController::class)
+    ->parameters(['products' => 'slug'])
+    ->only(['show', 'index']);
 
 Route::get('/products/{slug}/download-files', [ProductController::class, 'downloadFiles']);
