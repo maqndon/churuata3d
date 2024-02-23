@@ -145,6 +145,11 @@ class Product extends Model
         return $this->morphMany(Bom::class, 'bomable');
     }
 
+    public function comments(): MorphOne
+    {
+        return $this->morphOne(Comment::class, 'commentable');
+    }
+
     public function created_by(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
