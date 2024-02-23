@@ -3,9 +3,6 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Models\SiteSetting;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use PhpParser\Node\Expr\Cast\Array_;
 
 class ProductService
 {
