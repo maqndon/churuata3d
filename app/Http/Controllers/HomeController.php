@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ProductService;
+use App\Traits\MostDownloaded;
 
 class HomeController extends Controller
 {
 
-    protected $productService;
-
-    public function __construct(ProductService $productService)
-    {
-        $this->productService = $productService;
-    }
+    use MostDownloaded;
 
     public function show()
     {
-        $mostDownloadedProducts = $this->productService->getMostDownloaded(3);
+        $mostDownloadedProducts = $this->MostDownloaded(3);
 
         return view('welcome', compact('mostDownloadedProducts'));
     }

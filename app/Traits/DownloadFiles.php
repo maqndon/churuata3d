@@ -2,10 +2,14 @@
 
 namespace App\Traits;
 
+use Illuminate\Http\Request;
+
 trait DownloadFiles
 {
-    public function downloadFiles($slug)
+    public function downloadFiles(Request $request)
     {
+
+        $slug = $request->segment(3);
 
         $fileNames = $this->productService->getFileNames($slug);
 

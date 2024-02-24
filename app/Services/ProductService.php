@@ -6,14 +6,6 @@ use App\Models\Product;
 
 class ProductService
 {
-    public static function getMostDownloaded($qty = 3)
-    {
-        return Product::with('images')
-            ->where('status', 'published')
-            ->orderBy('downloads', 'desc')
-            ->take($qty)
-            ->get();
-    }
 
     public static function getParametric($slug)
     {
@@ -38,13 +30,12 @@ class ProductService
     {
         // Find the product by Slug
         $product = Product::where('slug', $slug)->first();
-
         return $product;
     }
 
     public function getRelatedProducts(Product $product)
     {
-        $relatedProducts = Product::with('images')
+        $relatedProducts = Product::with('images', 'categories')
             ->where('products.id', '<>', $product->id)
             ->whereHas('categories', function ($query) use ($product) {
                 $query->whereIn('categories.id', $product->categories()->pluck('category_id'));
