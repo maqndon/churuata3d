@@ -6,10 +6,8 @@ use Illuminate\Http\Request;
 
 trait DownloadFiles
 {
-    public function downloadFiles(Request $request)
+    public function downloadFiles($slug)
     {
-
-        $slug = $request->segment(3);
 
         $fileNames = $this->productService->getFileNames($slug);
 
