@@ -86,9 +86,16 @@ class BaseController extends Controller
 
         $data = $this->loadCommonData();
         $slugType = $relation === 'categories' ? 'category_slug' : 'tag_slug';
+        $slugName = $relation === 'categories' ? 'category_name' : 'tag_name';
         ${$slugType} = $slug;
+        ${$slugName} = $item->name;
 
-        return compact('products', 'item', $slugType) + $data;
+        return compact(
+            'products',
+            'item',
+            $slugType,
+            $slugName
+        ) + $data;
     }
 
     public function showCommon(Request $request, $model, $slug, $relation)
