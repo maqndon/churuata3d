@@ -16,8 +16,8 @@ class TagController extends BaseController
         return view('tags.index', $data);
     }
     
-    public function show(Request $request, $slug)
+    public function show(Request $request, string $label)
     {
-        return $this->showCommon($request, Tag::class, $slug, 'tags');
+        return $this->showCommon($request, Tag::class, $label, 'tags');
     }
 }

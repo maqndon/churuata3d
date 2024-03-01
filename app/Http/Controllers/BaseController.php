@@ -36,18 +36,18 @@ class BaseController extends Controller
         ];
     }
 
-    protected function getProductData(Request $request, $slug, $slug2, $relation)
+    protected function getProductData(Request $request, string $label, string $productSlug, string $relation)
     {
         try {
             $product = Product::with(['images', 'licence', 'tags', 'categories', 'print_settings', 'files'])
-                ->where('slug', $slug2)
+                ->where('slug', $productSlug)
                 ->where('status', 'published')
-                ->whereRelation($relation, 'slug', $slug)
+                ->whereRelation($relation, 'slug', $label)
                 ->firstOrFail();
 
             $commonContent = $this->productCommonContent->getProductCommonContent();
             $totalImages = collect($product->images->images_names)->count();
-            $relatedParametric = $this->productService->getParametric($slug2);
+            $relatedParametric = $this->productService->getParametric($productSlug);
             $data = $this->loadCommonData();
             $billOfMaterials = $this->getBillOfMaterials(Product::class, $product->id);
             $relatedProducts = $this->productService->getRelatedProducts($product);
@@ -59,48 +59,54 @@ class BaseController extends Controller
                 'billOfMaterials',
                 'relatedProducts',
                 'relatedParametric',
-                'relation'
             );
         } catch (\Throwable $th) {
             abort(404);
         }
     }
 
-    public function showProduct(Request $request, $slug, $slug2, $relation)
+    protected function getModelSlugData(Request $request, string $relation, string $label, string $model)
     {
-        $data = $this->getProductData($request, $slug, $slug2, $relation);
-        $data['slug'] = $slug;
-
+        $item = $model::where('slug', $label)->firstOrFail();
         $slugType = $relation === 'categories' ? 'category_slug' : 'tag_slug';
-        $data[$slugType] = $slug;
+        $slugName = $relation === 'categories' ? 'category_name' : 'tag_name';
+        
+        ${$slugType} = $label;
+        ${$slugName} = $item->name;
+
+        return compact(
+            $slugType,
+         $slugName,
+         'item'
+        );
+    }
+
+    protected function getModelProductsData(string $relation, string $label)
+    {
+        $products = Product::with($relation)
+            ->whereRelation($relation, 'slug', $label)
+            ->get();
+
+        return compact('products');
+    }
+
+    public function showProduct(Request $request, string $label, string $productSlug, string  $relation, string $model)
+    {
+        $productData = $this->getProductData($request, $label, $productSlug, $relation);
+        $labelData = $this->getModelSlugData($request, $relation, $label, $model);
+
+        $data = array_merge($productData, $labelData);
 
         return view('products.show', $data);
     }
 
-    protected function getModelData(Request $request, $model, $slug, $relation)
+    public function showCommon(Request $request, string $model, string $label, string $relation)
     {
-        $item = $model::where('slug', $slug)->firstOrFail();
-        $products = Product::with($relation)
-            ->whereRelation($relation, 'slug', $slug)
-            ->get();
+        $slugData = $this->getModelSlugData($request, $relation, $label, $model);
+        $products = $this->getModelProductsData($relation, $label);
 
-        $data = $this->loadCommonData();
-        $slugType = $relation === 'categories' ? 'category_slug' : 'tag_slug';
-        $slugName = $relation === 'categories' ? 'category_name' : 'tag_name';
-        ${$slugType} = $slug;
-        ${$slugName} = $item->name;
+        $data = array_merge($slugData, $products);
 
-        return compact(
-            'products',
-            'item',
-            $slugType,
-            $slugName
-        ) + $data;
-    }
-
-    public function showCommon(Request $request, $model, $slug, $relation)
-    {
-        $data = $this->getModelData($request, $model, $slug, $relation);
         return view($relation . '.show', $data);
     }
 }
