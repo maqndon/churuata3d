@@ -9,15 +9,15 @@ use Illuminate\Http\Request;
 class ProductController extends BaseController
 {
 
-    public function show(Request $request, string $label, string $productSlug)
+    public function show(Request $request, string $labelSlug, string $productSlug)
     {
-        $category = Category::where('slug', $label)->first();
-        $tag = Tag::where('slug', $label)->first();
+        $category = Category::where('slug', $labelSlug)->first();
+        $tag = Tag::where('slug', $labelSlug)->first();
 
         if ($category) {
-            return $this->showProduct($request, $label, $productSlug, 'categories', Category::class);
+            return $this->showProduct($request, $labelSlug, $productSlug, 'categories', Category::class);
         } elseif ($tag) {
-            return $this->showProduct($request, $label, $productSlug, 'tags', Tag::class);
+            return $this->showProduct($request, $labelSlug, $productSlug, 'tags', Tag::class);
         } else {
             abort(404);
         }
@@ -27,8 +27,7 @@ class ProductController extends BaseController
     {
 
         $data = $this->loadCommonData();
-        $data['categories'] = Category::all();
-        $data['mostDownloadedProductsCategory'] = $data['mostDownloadedProducts']->first()->categories->first()->slug;
+        $this->loadCategoryData($data);
 
         return view('products.index', $data);
     }

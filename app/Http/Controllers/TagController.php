@@ -10,14 +10,13 @@ class TagController extends BaseController
     public function index()
     {
         $data = $this->loadCommonData();
-        $data['tags'] = Tag::all();
-        $data['mostDownloadedProductsTag'] = $data['mostDownloadedProducts']->first()->tags->first()->slug;
-
+        $this->loadTagData($data);
+        
         return view('tags.index', $data);
     }
     
-    public function show(Request $request, string $label)
+    public function show(Request $request, string $labelSlug)
     {
-        return $this->showCommon($request, Tag::class, $label, 'tags');
+        return $this->showCommon($request, Tag::class, $labelSlug, 'tags');
     }
 }

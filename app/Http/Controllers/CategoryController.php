@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 
 class CategoryController extends BaseController
 {
-    public function show(Request $request, string $label)
+    public function show(Request $request, string $labelSlug)
     {
-        return $this->showCommon($request, Category::class, $label, 'categories');
+        return $this->showCommon($request, Category::class, $labelSlug, 'categories');
     }
 }
