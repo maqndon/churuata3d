@@ -42,11 +42,11 @@ class BaseController extends Controller
     {
         try {
             $product = Product::with(['images', 'licence', 'tags', 'categories', 'print_settings', 'files'])
-                ->where('slug', $productSlug)
-                ->where('status', 'published')
-                ->whereRelation($relation, 'slug', $labelSlug)
-                ->firstOrFail();
-
+            ->where('slug', $productSlug)
+            ->where('status', 'published')
+            ->whereRelation($relation, 'slug', $labelSlug)
+            ->firstOrFail();
+            
             $commonContent = $this->productCommonContent->getProductCommonContent();
             $totalImages = collect($product->images->images_names)->count();
             $relatedParametric = $this->productService->getParametric($productSlug);
@@ -72,14 +72,14 @@ class BaseController extends Controller
         $item = $model::where('slug', $labelSlug)->firstOrFail();
         $slugType = $relation === 'categories' ? 'category_slug' : 'tag_slug';
         $slugName = $relation === 'categories' ? 'category_name' : 'tag_name';
-        
+
         ${$slugType} = $labelSlug;
         ${$slugName} = $item->name;
 
         return compact(
             $slugType,
-         $slugName,
-         'item'
+            $slugName,
+            'item'
         );
     }
 
@@ -116,8 +116,8 @@ class BaseController extends Controller
     {
         $data['categories'] = Category::all();
 
-        if (!$data['categories']->isEmpty()) {
-            $data['mostDownloadedProductsCategory'] = $data['mostDownloadedProducts']->first()->categories->first()->slug;
+        if (!$data['categories']->isEmpty() && $mostDownloadedProduct = $data['mostDownloadedProducts']->first()) {
+            $data['mostDownloadedProductsCategory'] = $mostDownloadedProduct->categories->first()->slug;
         }
     }
 
@@ -125,10 +125,8 @@ class BaseController extends Controller
     {
         $data['tags'] = Tag::all();
 
-        if (!$data['tags']->isEmpty()) {
-            $data['mostDownloadedProductsTag'] = $data['mostDownloadedProducts']->first()->tags->first()->slug;
+        if (!$data['tags']->isEmpty() && $mostDownloadedProduct = $data['mostDownloadedProducts']->first()) {
+            $data['mostDownloadedProductsTag'] = $mostDownloadedProduct->tags->first()->slug;
         }
     }
-
-    
 }

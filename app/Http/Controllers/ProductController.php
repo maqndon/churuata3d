@@ -13,7 +13,7 @@ class ProductController extends BaseController
     {
         $category = Category::where('slug', $labelSlug)->first();
         $tag = Tag::where('slug', $labelSlug)->first();
-
+        
         if ($category) {
             return $this->showProduct($request, $labelSlug, $productSlug, 'categories', Category::class);
         } elseif ($tag) {
