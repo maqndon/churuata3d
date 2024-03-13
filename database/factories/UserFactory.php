@@ -2,8 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Product;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -34,5 +35,20 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Indicate that the user should have products associated with it.
+     *
+     * @param int $count
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function hasProducts($count = 1): static
+    {
+        return $this->afterCreating(function ($user) use ($count) {
+            $user->products()->saveMany(
+                Product::factory($count)->create(['created_by' => $user->id])
+            );
+        });
     }
 }
