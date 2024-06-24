@@ -31,12 +31,10 @@ Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product_slug}/download-files', [ProductController::class, 'downloadFiles'])
     ->name('products.downloadFiles');
 
-Route::prefix('products')->group(function () {
-    Route::get('categories', [ProductController::class, 'index'])
-        ->name('products.index');
-    Route::get('/', [ProductController::class, 'index'])
-        ->name('products.index');
-});
+    Route::prefix('products')->group(function () {
+        Route::get('categories', [ProductController::class, 'index'])->name('products.categories');
+        Route::get('/', [ProductController::class, 'index'])->name('products.index');
+    });
 
 Route::prefix('products')->group(function () {
     Route::get('tags', [TagController::class, 'index'])
