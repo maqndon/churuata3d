@@ -92,8 +92,8 @@ class SiteSettings extends Page implements HasForms
                                             ->required()
                                             ->getOptionLabelUsing(fn ($value): ?string => SocialMedia::find($value)?->name)
                                             ->options(function () {
-                                                $existingSocialMediaNames = SiteSetting::first()->social_media->pluck('id')->toArray();
-                                                $availableSocialMedia = SocialMedia::whereNotIn('id', $existingSocialMediaNames)->get();
+                                                $existingSocialMediaNames = SiteSetting::first() ? SiteSetting::first()->social_media->pluck('id')->toArray() : [];
+                                                $availableSocialMedia = $existingSocialMediaNames ? SocialMedia::whereNotIn('id', $existingSocialMediaNames)->get() : SocialMedia::get();
                                                 return $availableSocialMedia->pluck('name', 'id')->toArray();
                                             })
                                             ->searchable(),
@@ -136,16 +136,16 @@ class SiteSettings extends Page implements HasForms
 
             $socialMediaData = $data['social_media'] ?? [];
 
-            // Create an array to store only the IDs of the social media
-            $socialMediaIds = [];
+            // Create an associative array to store the IDs and Urls of the social media
+            $socialMediaSyncData = [];
 
             foreach ($socialMediaData as $socialMediaItem) {
-                // Add the social media ID to the array
-                $socialMediaIds[] = $socialMediaItem['social_media_id'];
+                // Add the social media ID and the Url to the array
+                $socialMediaSyncData[$socialMediaItem['social_media_id']] = ['url' => $socialMediaItem['url']];
             }
 
-            // Sync the site's social media with the provided IDs
-            $siteSetting->social_media()->sync($socialMediaIds);
+            // Sync the site's social media with the provided IDs and URLs
+            $siteSetting->social_media()->sync($socialMediaSyncData);
 
             // Update the URLs for existing social media
             foreach ($socialMediaData as $socialMediaItem) {
