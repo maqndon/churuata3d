@@ -21,8 +21,8 @@ class LicenceFactory extends Factory
             'short_description' => fake()->unique()->sentence(),
             'description' => fake()->unique()->sentence(),
             'link' => fake()->unique()->imageUrl(),
-            'icon' => fake()->unique()->image(),
-            'logo' => fake()->unique()->image(),
+            'icon' => fake()->unique()->word() . '.png',
+            'logo' => fake()->unique()->word() . '.png',
         ];
     }
 }
