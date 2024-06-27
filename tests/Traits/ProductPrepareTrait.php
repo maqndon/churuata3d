@@ -2,20 +2,18 @@
 
 namespace Tests\Traits;
 
+use App\Models\Product;
 use Database\Seeders\ChuruataDatabaseSeeder;
 
-trait ProductSetUpTrait
+trait ProductPrepareTrait
 {
     use ProductTrait;
 
-    public function setUp(): void
+    public function prepareProduct(): Product
     {
-        parent::setUp();
-
         $this->seed();
         $this->seed(ChuruataDatabaseSeeder::class);
-        
-        $this->product = $this->createProduct();
 
+        return $this->createProduct();
     }
 }

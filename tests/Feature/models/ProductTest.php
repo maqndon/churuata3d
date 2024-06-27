@@ -7,15 +7,20 @@ use App\Models\File;
 use App\Models\User;
 use App\Models\Image;
 use App\Models\Licence;
-use Tests\Traits\ProductSetUpTrait;
+use Tests\Traits\ProductPrepareTrait;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ProductTest extends TestCase
 {
-    use RefreshDatabase, WithFaker, ProductSetUpTrait;
+    use RefreshDatabase, ProductPrepareTrait;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->product = $this->prepareProduct();
+    }
 
     /** @test */
     public function products_table_has_expected_columns(): void
@@ -40,48 +45,55 @@ class ProductTest extends TestCase
             'is_parametric',
             'related_parametric',
             'downloads',
-        ]), 1);
+        ]));
     }
 
     /** @test */
-    public function model_product_exist()
+    public function model_product_exist(): void
     {
+        $this->assertNotNull($this->product);
         $this->assertModelExists($this->product);
     }
 
     /** @test */
-    public function a_product_belongs_to_a_user()
+    public function a_product_belongs_to_a_user(): void
     {
         $this->assertInstanceOf(User::class, $this->product->user);
     }
 
     /** @test */
-    public function a_product_belongs_to_many_categories()
+    public function a_product_belongs_to_many_categories(): void
     {
         $this->assertInstanceOf(Collection::class, $this->product->categories);
     }
 
     /** @test */
-    public function a_product_has_a_licence()
+    public function a_product_has_a_licence(): void
     {
         $this->assertInstanceOf(Licence::class, $this->product->licence);
     }
 
     /** @test */
-    public function a_product_belongs_to_many_tags()
+    public function a_product_belongs_to_many_tags(): void
     {
         $this->assertInstanceOf(Collection::class, $this->product->tags);
     }
 
     /** @test */
-    public function a_product_morphs_one_image()
+    public function a_product_morphs_one_image(): void
     {
         $this->assertInstanceOf(Image::class, $this->product->images);
     }
 
     /** @test */
-    public function a_product_morphs_one_file()
+    public function a_product_morphs_one_file(): void
     {
         $this->assertInstanceOf(File::class, $this->product->files);
+    }
+
+    /** @test */
+    public function a_product_morphs_many_bom(): void
+    {
+        $this->assertInstanceOf(Collection::class, $this->product->bill_of_materials);
     }
 }

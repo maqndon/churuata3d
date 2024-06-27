@@ -4,20 +4,42 @@ namespace Tests\Feature;
 
 use App\Models\Tag;
 use Tests\TestCase;
-use Tests\Traits\ProductSetUpTrait;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Traits\ProductTrait;
 use Tests\Traits\CategoryTrait;
 use Tests\Traits\MostDownloadedTrait;
+use Tests\Traits\ProductPrepareTrait;
+use Database\Factories\SiteSettingFactory;
+use Database\Factories\SocialMediaFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RouteTest extends TestCase
 {
-    use RefreshDatabase, ProductSetUpTrait, CategoryTrait, MostDownloadedTrait;
+    use RefreshDatabase, CategoryTrait, MostDownloadedTrait, ProductPrepareTrait, ProductTrait;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        // $this->product = $this->prepareProduct();
+    }
 
     /** @test */
     public function home_route(): void
     {
-        $response = $this->get(route('welcome'), ['mostDownloadedProducts' => $this->mostDownloaded()]);
+        $product = $this->createProduct();
+        $categorySlug = $product->categories()->first();
+        $tagSlug = $product->tags()->first();
+
+        $siteSettings = SiteSettingFactory::new()->create();
+        $socialMedias = SocialMediaFactory::new()->count(3)->create();
+
+        $response = $this->get(route('welcome'), [
+            'mostDownloadedProducts' => $this->mostDownloaded(),
+            'category_slug' => $categorySlug,
+            'tag_slug' => $tagSlug,
+            'product' => $product,
+            'siteSettings' => $siteSettings,
+            'socialMedias' => $socialMedias
+        ]);
 
         $response-> assertOk();
     }
@@ -34,7 +56,7 @@ class RouteTest extends TestCase
     public function categories_index_route(): void
     {
 
-        $response = $this->get(route('products.index'));
+        $response = $this->get(route('products.categories'));
 
         $response-> assertOk();
     }

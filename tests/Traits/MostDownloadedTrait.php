@@ -31,7 +31,6 @@ trait MostDownloadedTrait
             $product->images()->save($image, ['imageable_type' => Product::class]);
         });
         
-        
-        return $products;
+        return $products->load('categories', 'tags', 'images');
     }
 }
