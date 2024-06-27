@@ -20,7 +20,7 @@ class ImageFactory extends Factory
 
         return [
                 'imageable_type' => Product::class,
-                'images_names' => fake()->image(),
+                'images_names' => [fake()->word(), fake()->word(), fake()->word()],
                 'metadata' => fake()->word(),
         ];
     }
