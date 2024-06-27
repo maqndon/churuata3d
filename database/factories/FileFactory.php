@@ -19,7 +19,7 @@ class FileFactory extends Factory
     {
         return [
             'fileable_type' => Product::class,
-            'files_names' => fake()->image(),
+            'files_names' => [fake()->image(), fake()->word(), fake()->word()],
             'metadata' => fake()->word(),
         ];
     }
