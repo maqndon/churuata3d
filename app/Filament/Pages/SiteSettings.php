@@ -98,9 +98,10 @@ class SiteSettings extends Page implements HasForms
                                             })
                                             ->searchable(),
                                         TextInput::make('url')
-                                            ->prefix('https://')
                                             ->suffixIcon('heroicon-m-globe-alt')
-                                            ->required(),
+                                            ->required()
+                                            ->activeUrl()
+                                            ->placeholder('https://example.com/profil'),
                                     ])
                                     ->reorderableWithButtons()
                                     ->columns(2)
