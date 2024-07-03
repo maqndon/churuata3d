@@ -39,6 +39,7 @@ class Product extends Model
     ];
 
     protected $casts = [
+        'is_free' => 'boolean',
         'is_featured' => 'boolean',
         'is_downloadable' => 'boolean',
         'is_printable' => 'boolean',
