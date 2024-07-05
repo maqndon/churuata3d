@@ -116,7 +116,8 @@ class ImportWoocommerceProducts extends Command
                 }
 
                 if ($metaKey === 'focus_keyword') {
-                    $metaKeywords = $metaValue;
+                    $metaKeywords = preg_split('/\s*,\s*/', $metaValue);
+
                 }
 
                 if ($metaKey === 'seo_title') {
@@ -128,7 +129,7 @@ class ImportWoocommerceProducts extends Command
                 }
 
                 if ($metaKey === 'product_image_gallery') {
-                    $images = explode(',', $metaValue);
+                    $images = preg_split('/\s*,\s*/', $metaValue);
                 }
             }
 
