@@ -11,6 +11,12 @@ class Sale extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'product_id',
+        'quantity',
+        'amount'
+    ];
+
     public function product(): BelongsTo
     {
         Return $this->belongsTo(Product::class);
