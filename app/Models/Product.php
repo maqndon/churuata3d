@@ -96,6 +96,27 @@ class Product extends Model
         });
     }
 
+    # Scope to load default relationships
+    public function scopeWithDefaultRelationships($query)
+    {
+        return $query->with([
+            'user',
+            'licence',
+            'files',
+            'images',
+            'seos',
+            'comments',
+            'bill_of_materials',
+            'printing_materials',
+            'print_settings',
+            'tags',
+            'sales',
+            'categories',
+            'print_supports_rafts',
+            'product_physical_attributes',
+        ]);
+    }
+
     public function getDownloadCountAttribute()
     {
         return $this->downloads;
@@ -136,6 +157,11 @@ class Product extends Model
         return $this->hasOne(PrintSupportRaft::class);
     }
 
+    public function product_physical_attributes(): HasOne
+    {
+        return $this->hasOne(ProductPhysicalAttribute::class);
+    }
+
     public function licence(): BelongsTo
     {
         return $this->belongsTo(Licence::class);
@@ -146,9 +172,9 @@ class Product extends Model
         return $this->morphMany(Bom::class, 'bomable');
     }
 
-    public function comments(): MorphOne
+    public function comments(): MorphMany
     {
-        return $this->morphOne(Comment::class, 'commentable');
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     public function user(): BelongsTo
