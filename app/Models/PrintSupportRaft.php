@@ -15,4 +15,9 @@ class PrintSupportRaft extends Model
         'has_raft',
     ];
 
+    protected $casts = [
+        'has_supports' => 'boolean',
+        'has_raft' => 'boolean',
+    ];
+
 }
