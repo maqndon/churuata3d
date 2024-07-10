@@ -19,7 +19,7 @@ class ProductResource extends JsonResource
             'sku' => $this->sku,
             'excerpt' => $this->excerpt,
             'body' => $this->body,
-            'stock' => $this->stock !== null ? $this->stock : "Don't apply",
+            'stock' => $this->stock !== null ? $this->stock : $this->NOT_APPLICABLE,
             'price' => $this->price,
             'sale_price' => $this->sale_price,
             'status' => $this->status,
