@@ -1,0 +1,38 @@
+{
+    "created_by": 1,
+    "licence_id": 2,
+    "title": "Sample Product Json",
+    "slug": "sample-product-json",
+    "sku": "SP123332",
+    "excerpt": "This is a sample product Json.",
+    "body": "Detailed description of the sample product Json.",
+    "stock": 200,
+    "price": 19.99,
+    "sale_price": 9.99,
+    "status": "Published",
+    "is_featured": true,
+    "is_downloadable": false,
+    "is_free": false,
+    "is_printable": true,
+    "is_parametric": false,
+    "downloads": 0,
+    "created_at": "2024-07-09 12:00:00",
+    "bill_of_materials": [
+        {
+            "qty": "3",
+            "item": "test"
+        },
+        {
+            "qty": "2",
+            "item": "another_test"
+        }
+    ],
+	"files": [
+        {
+            "files_names": 	[
+					"product-files\\sample-product-json/sample-product-json_05-02-2005.txt",
+					"product-files\\sample-product-json/sample-product-json_Easy_Connectors.scad"
+				]
+        }
+    ]
+}
