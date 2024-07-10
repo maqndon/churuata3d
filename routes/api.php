@@ -18,7 +18,5 @@ use App\Http\Controllers\Api\ProductController;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('products', [ProductController::class, 'index']);
-    Route::get('product/{id}', [ProductController::class, 'show']);
-});
+Route::apiResource('products',  ProductController::class)
+    ->middleware('auth:sanctum');
