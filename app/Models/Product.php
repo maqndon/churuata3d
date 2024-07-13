@@ -117,6 +117,57 @@ class Product extends Model
         ]);
     }
 
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'Published');
+    }
+
+    public function scopeDraft($query)
+    {
+        return $query->where('status', 'Draft');
+    }
+
+    public function scopeIsFree($query)
+    {
+        return $query->where('is_free', true);
+    }
+
+    public function scopeIsPrintable($query)
+    {
+        return $query->where('is_printable', true);
+    }
+
+    public function scopeIsDownloadable($query)
+    {
+        return $query->where('is_downloadable', true);
+    }
+
+    public function scopeIsParametric($query)
+    {
+        return $query->where('is_parametric', true);
+    }
+
+    public function scopeIsFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopeOnSale($query)
+    {
+        return $query->where('sale_price','>', 0)->orWhere('sale_price','=', 0);
+    }
+
+    public function scopeOnStock($query)
+    {
+        return $query->where('stock', '>', 0);
+    }
+
+    public function scopeMostDownlaoded($query, $limit=3)
+    {
+        return $query->orderBy('downloads', 'desc')->limit($limit);
+    }
+
     public function getDownloadCountAttribute()
     {
         return $this->downloads;
