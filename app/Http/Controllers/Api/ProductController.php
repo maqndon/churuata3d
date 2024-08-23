@@ -51,7 +51,7 @@ class ProductController extends Controller
             'is_printable' => 'required|boolean',
             'is_parametric' => 'required|boolean',
             'related_parametric' => 'string',
-            'downloads' => 'required|numeric',
+            'downloads' => 'numeric',
             'created_at' => 'required|date',
             'bill_of_materials' => 'array',
             'bill_of_materials.*.qty' => 'integer',
@@ -62,45 +62,53 @@ class ProductController extends Controller
             'files.*.metadata' => 'string|max:255',
         ]);
 
-        $product = Product::create([
-            'created_by' => $request->input('user'),
-            'licence_id' => $request->input('licence_id'),
-            'title' => $request->input('title'),
-            'slug' => $request->input('slug'),
-            'sku' => $request->input('sku'),
-            'excerpt' => $request->input('excerpt'),
-            'body' => $request->input('body'),
-            'stock' => $request->input('stock'),
-            'price' => $request->input('price'),
-            'sale_price' => $request->input('sale_price'),
-            'status' => $request->input('status'),
-            'is_featured' => $request->input('is_featured'),
-            'is_downloadable' => $request->input('is_downloadable'),
-            'is_free' => $request->input('is_free'),
-            'is_printable' => $request->input('is_printable'),
-            'is_parametric' => $request->input('is_parametric'),
-            'related_parametric' => $request->input('related_parametric'),
-            'downloads' => $request->input('downloads'),
-            'created_at' => $request->input('created_at'),
-        ]);
-
-        // add bill of materials
-        if ($request->bill_of_materials) {
-            foreach ($request->input('bill_of_materials') as $bom) {
-                $product->bill_of_materials()->create($bom);
+        try {
+            $product = Product::create([
+                'created_by' => $request->input('user'),
+                'licence_id' => $request->input('licence_id'),
+                'title' => $request->input('title'),
+                'slug' => $request->input('slug'),
+                'sku' => $request->input('sku'),
+                'excerpt' => $request->input('excerpt'),
+                'body' => $request->input('body'),
+                'stock' => $request->input('stock'),
+                'price' => $request->input('price'),
+                'sale_price' => $request->input('sale_price'),
+                'status' => $request->input('status'),
+                'is_featured' => $request->input('is_featured'),
+                'is_downloadable' => $request->input('is_downloadable'),
+                'is_free' => $request->input('is_free'),
+                'is_printable' => $request->input('is_printable'),
+                'is_parametric' => $request->input('is_parametric'),
+                'related_parametric' => $request->input('related_parametric'),
+                'downloads' => $request->input('downloads'),
+                'created_at' => $request->input('created_at'),
+            ]);
+    
+            // add bill of materials
+            if ($request->bill_of_materials) {
+                foreach ($request->input('bill_of_materials') as $bom) {
+                    $product->bill_of_materials()->create($bom);
+                }
             }
+    
+            // add product files
+            if ($request->input('files')) {
+                foreach ($request->input('files') as $fileData) {
+                    $product->files()->create($fileData);
+                }
+            }
+    
+            return response()->json([
+                'message' => 'Product ' . $request->title . ' Created Successfully',
+            ], 201);
+        } catch (\Throwable $th) {
+            #\Log::error('Error creating product: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Product could not be Created Successfully',
+            ], 500);
         }
 
-        // add product files
-        if ($request->input('files')) {
-            foreach ($request->input('files') as $fileData) {
-                $product->files()->create($fileData);
-            }
-        }
-
-        return response()->json([
-            'message' => 'Product ' . $request->title . ' Created Successfully',
-        ], 201);
     }
 
     /**
