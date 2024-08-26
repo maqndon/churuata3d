@@ -22,10 +22,9 @@ class ProductController extends BaseController
             abort(404);
         }
     }
-
+    
     public function index()
     {
-
         $data = $this->loadCommonData();
         $this->loadCategoryData($data);
 

@@ -163,7 +163,7 @@ class Product extends Model
         return $query->where('stock', '>', 0);
     }
 
-    public function scopeMostDownlaoded($query, $limit=3)
+    public function scopeMostDownloaded($query, $limit=3)
     {
         return $query->orderBy('downloads', 'desc')->limit($limit);
     }
