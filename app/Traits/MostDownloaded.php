@@ -13,10 +13,5 @@ trait MostDownloaded
             ->withDefaultRelationships()
             ->mostDownloaded($qty)
             ->get();
-        // return Product::with('images', 'categories')
-        //     ->where('status', 'published')
-        //     ->orderBy('downloads', 'desc')
-        //     ->take($qty)
-        //     ->get();
     }
 }
