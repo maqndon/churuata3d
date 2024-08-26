@@ -9,7 +9,7 @@ class TagController extends BaseController
 {
     public function index()
     {
-        $data = $this->loadCommonData();
+        $data = $this->mostDownloadedProducts();
         $this->loadTagData($data);
         
         return view('tags.index', $data);

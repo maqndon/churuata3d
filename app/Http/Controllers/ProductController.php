@@ -25,7 +25,7 @@ class ProductController extends BaseController
     
     public function index()
     {
-        $data = $this->loadCommonData();
+        $data = $this->mostDownloadedProducts();
         $this->loadCategoryData($data);
 
         return view('products.index', $data);

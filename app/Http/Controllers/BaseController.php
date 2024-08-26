@@ -30,7 +30,7 @@ class BaseController extends Controller
         $this->productCommonContent = $productCommonContent;
     }
 
-    protected function loadCommonData()
+    protected function mostDownloadedProducts()
     {
         $mostDownloadedProducts = $this->mostDownloaded(3);
         return [
@@ -50,7 +50,6 @@ class BaseController extends Controller
             $commonContent = $this->productCommonContent->getProductCommonContent();
             $totalImages = collect($product->images->images_names)->count();
             $relatedParametric = $this->productService->getParametric($productSlug);
-            $data = $this->loadCommonData();
             $billOfMaterials = $this->getBillOfMaterials(Product::class, $product->id);
             $relatedProducts = $this->productService->getRelatedProducts($product);
 
@@ -106,8 +105,9 @@ class BaseController extends Controller
     {
         $slugData = $this->getModelSlugData($request, $relation, $labelSlug, $model);
         $products = $this->getModelProductsData($relation, $labelSlug);
+        $mostDownloadedProducts = $this->mostDownloadedProducts();
 
-        $data = array_merge($slugData, $products);
+        $data = array_merge($slugData, $products, $mostDownloadedProducts);
 
         return view($relation . '.show', $data);
     }
