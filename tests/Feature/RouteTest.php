@@ -7,20 +7,13 @@ use Tests\TestCase;
 use Tests\Traits\ProductTrait;
 use Tests\Traits\CategoryTrait;
 use Tests\Traits\MostDownloadedTrait;
-use Tests\Traits\ProductPrepareTrait;
 use Database\Factories\SiteSettingFactory;
 use Database\Factories\SocialMediaFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RouteTest extends TestCase
 {
-    use RefreshDatabase, CategoryTrait, MostDownloadedTrait, ProductPrepareTrait, ProductTrait;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        // $this->product = $this->prepareProduct();
-    }
+    use RefreshDatabase, CategoryTrait, MostDownloadedTrait, ProductTrait;
 
     /** @test */
     public function home_route(): void
@@ -74,7 +67,9 @@ class RouteTest extends TestCase
     {
         $category = $this->createCategory();
 
-        $response = $this->get(route('categories.show', ['category_slug' => $category->slug]));
+        $response = $this->get(route('categories.show', ['category_slug' => $category->slug]), [
+            'mostDownloadedProducts' => $this->mostDownloaded()
+        ]);
 
         $response->assertOk();
     }
