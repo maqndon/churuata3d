@@ -29,7 +29,7 @@ class TagController extends Controller
     public function show(string $id)
     {
         try {
-            $tag = Tag::find($id);
+            $tag = Tag::findOrFail($id);
             return new TagResource($tag);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([

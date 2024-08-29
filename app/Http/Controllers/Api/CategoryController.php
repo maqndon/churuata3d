@@ -29,7 +29,7 @@ class CategoryController extends Controller
     public function show(string $id)
     {
         try {
-            $category = Category::find($id);
+            $category = Category::findOrFail($id);
             return new CategoryResource($category);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
