@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +21,10 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::apiResource('products',  ProductController::class)
+    ->middleware('auth:sanctum');
+    
+Route::apiResource('categories',  CategoryController::class)
+    ->middleware('auth:sanctum');
+
+Route::apiResource('tags',  TagController::class)
     ->middleware('auth:sanctum');
