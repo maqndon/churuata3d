@@ -30,7 +30,19 @@ class Handler extends ExceptionHandler
     }
 
     protected function unauthenticated($request, AuthenticationException $exception)
+
     {
-        return response()->json(['error' => 'Unauthorized'], 401);
+        // Check if the request expects a JSON response, typically for API requests
+        if ($request->is('api') || $request->is('api/*')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // Redirect to Filament login for admin routes, or fallback to a generic login
+        if ($request->is('admin') || $request->is('admin/*')) {
+            return redirect()->guest(route('filament.admin.auth.login'));  // Adjust this based on your actual route setup
+        }
+
+        // Redirect to a general login route if it exists
+        return redirect()->guest(route('login'));
     }
 }
