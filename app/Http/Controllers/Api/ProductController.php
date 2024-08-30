@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
+use App\Http\Requests\StoreProductRequest;
 
 class ProductController extends Controller
 {
@@ -30,131 +31,62 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
 
-        $request->validate([
-            'created_by' => 'required|numeric',
-            'licence_id' => 'required|numeric',
-            'title' => 'required|unique:products|max:255',
-            'slug' => 'required|unique:products|max:255',
-            'sku' => 'required|unique:products|max:255',
-            'excerpt' => 'required|string',
-            'body' => 'required|string',
-            'stock' => 'numeric',
-            'price' => 'exclude_unless:is_free,false|required|numeric',
-            'sale_price' => 'exclude_unless:is_free,false|required|numeric',
-            'status' => 'required',
-            'is_featured' => 'required|boolean',
-            'is_downloadable' => 'required|boolean',
-            'is_free' => 'required|boolean',
-            'is_printable' => 'required|boolean',
-            'is_parametric' => 'required|boolean',
-            'related_parametric' => 'string',
-            'downloads' => 'numeric',
-            'created_at' => 'required|date',
-            'printing_materials' => 'array',
-            'printing_materials.*.id' => 'numeric',
-            'print_settings' => 'array',
-            'print_settings.*.id' => 'numeric',
-            'bill_of_materials' => 'array',
-            'bill_of_materials.*.qty' => 'integer',
-            'bill_of_materials.*.item' => 'string|max:255',
-            'files' => 'array',
-            'files.*.files_names' => 'array',
-            'files.*.files_names.*' => 'string',
-            'files.*.metadata' => 'string|max:255',
-            'images' => 'array',
-            'images.*.images_names' => 'array',
-            'images.*.images_names.*' => 'string',
-            'images.*.metadata' => 'string|max:255',
-            'seos' => 'array',
-            'seos.*.title' => 'string|unique:seos,title',
-            'seos.*.meta_description.*' => 'string',
-            'seos.*.meta_keywords' => 'array',
-            'categories' => 'array',
-            'categories.*.category_id' => 'numeric',
-            'tags' => 'array',
-            'tags.*.tag_id' => 'numeric'
-        ]);
-
         try {
-            $product = Product::create([
-                'created_by' => $request->input('user'),
-                'licence_id' => $request->input('licence_id'),
-                'title' => $request->input('title'),
-                'slug' => $request->input('slug'),
-                'sku' => $request->input('sku'),
-                'excerpt' => $request->input('excerpt'),
-                'body' => $request->input('body'),
-                'stock' => $request->input('stock'),
-                'price' => $request->input('price'),
-                'sale_price' => $request->input('sale_price'),
-                'status' => $request->input('status'),
-                'is_featured' => $request->input('is_featured'),
-                'is_downloadable' => $request->input('is_downloadable'),
-                'is_free' => $request->input('is_free'),
-                'is_printable' => $request->input('is_printable'),
-                'is_parametric' => $request->input('is_parametric'),
-                'related_parametric' => $request->input('related_parametric'),
-                'downloads' => $request->input('downloads'),
-                'created_at' => $request->input('created_at'),
-            ]);
+            $product = Product::create($request->only([
+                'created_by',
+                'licence_id',
+                'title',
+                'slug',
+                'sku',
+                'excerpt',
+                'body',
+                'stock',
+                'price',
+                'sale_price',
+                'status',
+                'is_featured',
+                'is_downloadable',
+                'is_free',
+                'is_printable',
+                'is_parametric',
+                'related_parametric',
+                'downloads',
+                'created_at'
+            ]));
 
-            // add printing materials
-            if ($request->printing_materials) {
-                foreach ($request->input('print_settings') as $print_setting) {
-                    $product->print_settings()->attach($print_setting);
-                }
+            if ($request->has('printing_materials')) {
+                $product->printing_materials()->sync($request->input('printing_materials.*.id'));
             }
 
-            // add print settings
-            if ($request->printing_materials) {
-                foreach ($request->input('printing_materials') as $printing_material) {
-                    $product->printing_materials()->attach($printing_material);
-                }
+            if ($request->has('print_settings')) {
+                $product->print_settings()->sync($request->input('print_settings.*.id'));
             }
 
-            // add bill of materials
-            if ($request->bill_of_materials) {
-                foreach ($request->input('bill_of_materials') as $bom) {
-                    $product->bill_of_materials()->create($bom);
-                }
+            if ($request->has('bill_of_materials')) {
+                $product->bill_of_materials()->createMany($request->input('bill_of_materials'));
             }
 
-            // add product files
-            if ($request->input('files')) {
-                foreach ($request->input('files') as $fileData) {
-                    $product->files()->create($fileData);
-                }
+            if ($request->has('files')) {
+                $product->files()->createMany($request->input('files'));
             }
 
-            // add product images
-            if ($request->input('images')) {
-                foreach ($request->input('images') as $image) {
-                    $product->images()->create($image);
-                }
+            if ($request->has('images')) {
+                $product->images()->createMany($request->input('images'));
             }
 
-            // add product seo
-            if ($request->input('seos')) {
-                foreach ($request->input('seos') as $seo) {
-                    $product->seos()->create($seo);
-                }
+            if ($request->has('seos')) {
+                $product->seos()->createMany($request->input('seos'));
             }
 
-            // add product categories
-            if ($request->input('categories')) {
-                foreach ($request->input('categories') as $category) {
-                    $product->categories()->sync($category);
-                }
+            if ($request->has('categories')) {
+                $product->categories()->sync($request->input('categories.*.category_id'));
             }
 
-            // add product tags
-            if ($request->input('tags')) {
-                foreach ($request->input('categories') as $tag) {
-                    $product->tags()->sync($tag);
-                }
+            if ($request->has('tags')) {
+                $product->tags()->sync($request->input('tags.*.tag_id'));
             }
 
             return response()->json([
