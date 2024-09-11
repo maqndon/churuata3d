@@ -17,9 +17,6 @@ class BomFactory extends Factory
      */
     public function definition(): array
     {
-
-        $product = Product::find(1);
-
         return [
             'bomable_type' => Product::class,
             'qty' => fake()->randomNumber(),
