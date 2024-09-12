@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 
 class ProductController extends Controller
 {
@@ -35,7 +36,7 @@ class ProductController extends Controller
     {
 
         try {
-            $product = Product::create($request->only([
+            Product::create($request->only([
                 'created_by',
                 'licence_id',
                 'title',
@@ -57,46 +58,14 @@ class ProductController extends Controller
                 'created_at'
             ]));
 
-            if ($request->has('printing_materials')) {
-                $product->printing_materials()->sync($request->input('printing_materials.*.id'));
-            }
-
-            if ($request->has('print_settings')) {
-                $product->print_settings()->sync($request->input('print_settings.*.id'));
-            }
-
-            if ($request->has('bill_of_materials')) {
-                $product->bill_of_materials()->createMany($request->input('bill_of_materials'));
-            }
-
-            if ($request->has('files')) {
-                $product->files()->createMany($request->input('files'));
-            }
-
-            if ($request->has('images')) {
-                $product->images()->createMany($request->input('images'));
-            }
-
-            if ($request->has('seos')) {
-                $product->seos()->createMany($request->input('seos'));
-            }
-
-            if ($request->has('categories')) {
-                $product->categories()->sync($request->input('categories.*.category_id'));
-            }
-
-            if ($request->has('tags')) {
-                $product->tags()->sync($request->input('tags.*.tag_id'));
-            }
-
             return response()->json([
-                'message' => 'Product ' . $request->title . ' Created Successfully',
+                'message' => 'Product ' . $request->title . ' created successfully',
             ], 201);
         } catch (\Throwable $th) {
             \Log::error('Error creating product: ' . $th->getMessage());
 
             return response()->json([
-                'message' => 'Product could not be Created Successfully',
+                'message' => 'Product could not be created successfully',
             ], 500);
         }
     }
@@ -119,16 +88,64 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        try {
+            // Filter the data that has changed
+            $data = array_filter($request->only([
+                'created_by',
+                'licence_id',
+                'title',
+                'slug',
+                'sku',
+                'excerpt',
+                'body',
+                'stock',
+                'price',
+                'sale_price',
+                'status',
+                'is_featured',
+                'is_downloadable',
+                'is_free',
+                'is_printable',
+                'is_parametric',
+                'related_parametric',
+                'downloads'
+            ]), function ($value) {
+                return !is_null($value);
+            });
+
+            // Update the product with the filtered data
+            $product->update($data);
+
+            return response()->json([
+                'message' => 'Product ' . $request->title . ' updated successfully',
+            ], 200);
+        } catch (\Throwable $th) {
+            \Log::error('Error updating product: ' . $th->getMessage());
+
+            return response()->json([
+                'message' => 'Product could not be updated successfully',
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        try {
+            $product->delete();
+            return response()->json([
+                'message' => 'Product ' . $product->title . ' deleted successfully',
+            ], 200);
+        } catch (\Throwable $th) {
+            \Log::error('Error deleting product: ' . $th->getMessage());
+
+            return response()->json([
+                'message' => 'Product could not be deleted successfully',
+            ], 500);
+        }
     }
 }
