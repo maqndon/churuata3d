@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Products;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -36,6 +36,7 @@ class UpdateProductRequest extends FormRequest
                 ],
                 'slug' => [
                     'required',
+                    'alpha_dash',
                     'max:255',
                     Rule::unique('products', 'slug')->ignore($this->input('slug'), 'slug'),
                 ],

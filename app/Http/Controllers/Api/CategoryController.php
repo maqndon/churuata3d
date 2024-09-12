@@ -6,7 +6,8 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Categories\StoreCategoryRequest;
+use App\Http\Requests\Categories\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -41,36 +42,69 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-
-        // Create a validator instance
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|unique:categories,name',
-            'slug' => 'required|alpha_dash|unique:categories,slug',
-        ]);
-
-        // Handle validation failure
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422); // 422 Unprocessable Entity
+        {
+            try {
+                Category::create($request->only([
+                    'name',
+                    'slug',
+                ]));
+    
+                return response()->json([
+                    'message' => 'Category ' . $request->input('name') . ' created successfully',
+                ], 201);
+            } catch (\Throwable $th) {
+                // Log error and return a JSON response
+                \Log::error('Error creating Category: ' . $th->getMessage());
+                return response()->json([
+                    'message' => 'Category could not be created successfully',
+                ], 500);
+            }
         }
+    }
 
+        /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateCategoryRequest $request, Category $category)
+    {
         try {
-            Category::create([
-                'name' => $request->input('name'),
-                'slug' => $request->input('slug'),
-            ]);
+            // Filter the data that has changed
+            $data = array_filter($request->only([
+                'name',
+                'slug',
+            ]), function ($value) {
+                return !is_null($value);
+            });
+
+            // Update the category with the filtered data
+            $category->update($data);
 
             return response()->json([
-                'message' => 'Category ' . $request->input('name') . ' Created Successfully',
-            ], 201);
+                'message' => 'Category ' . $category->name . ' updated successfully',
+            ], 200);
         } catch (\Throwable $th) {
-            // Log error and return a JSON response
-            // \Log::error('Error creating category: ' . $th->getMessage());
+            \Log::error('Error updating category: ' . $th->getMessage());
+
             return response()->json([
-                'message' => 'Category could not be Created Successfully',
+                'message' => 'Category could not be updated successfully',
+            ], 500);
+        }
+    }
+
+    public function destroy(Category $category)
+    {
+        try {
+            $category->delete();
+            return response()->json([
+                'message' => 'Category ' . $category->name . ' deleted successfully',
+            ], 200);
+        } catch (\Throwable $th) {
+            \Log::error('Error deleting category: ' . $th->getMessage());
+
+            return response()->json([
+                'message' => 'Category could not be deleted successfully',
             ], 500);
         }
     }
