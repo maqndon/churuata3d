@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Tags;
+namespace App\Http\Requests\Categories;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTagRequest extends FormRequest
+class StoreCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class StoreTagRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:tags,name',
-            'slug' => 'required|alpha_dash|unique:tags,slug',
+            'name' => 'required|string|unique:categories,name',
+            'slug' => 'required|alpha_dash|unique:categories,slug',
         ];
     }
 }
