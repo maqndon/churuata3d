@@ -3,14 +3,23 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Tag;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Resources\TagResource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tags\StoreTagRequest;
 use App\Http\Requests\Tags\UpdateTagRequest;
+use App\Repositories\TagRepositoryInterface;
 
 class TagController extends Controller
 {
+    private $tagRepository;
+
+    public function __construct(TagRepositoryInterface $tagRepository)
+    {
+        $this->tagRepository = $tagRepository;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -39,6 +48,13 @@ class TagController extends Controller
         }
     }
 
+    public function getTags(Product $product)
+    {
+        return response()->json([
+            'tags' => TagResource::collection($product->tags)
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -58,6 +74,22 @@ class TagController extends Controller
             \Log::error('Error creating Tag: ' . $th->getMessage());
             return response()->json([
                 'message' => 'Tag could not be created successfully',
+            ], 500);
+        }
+    }
+
+    public function attachTag(Request $request, Product $product, Tag $tag)
+    {
+        try {
+            $this->tagRepository->attachTag($request, $product, $tag);
+            return response()->json([
+                'message' => 'Tag ' . $tag->name . ' added to ' . $product->title . ' successfully',
+            ], 201);
+        } catch (\Throwable $th) {
+            // Log error and return a JSON response
+            \Log::error('Error adding Tag: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Tag could not be added successfully',
             ], 500);
         }
     }
@@ -103,6 +135,22 @@ class TagController extends Controller
 
             return response()->json([
                 'message' => 'Tag could not be deleted successfully',
+            ], 500);
+        }
+    }
+
+    public function detachTag(Request $request, Product $product, Tag $tag)
+    {
+        try {
+            $this->tagRepository->detachTag($request, $product, $tag);
+            return response()->json([
+                'message' => 'Tag ' . $tag->name . ' removed from ' . $product->title . ' successfully',
+            ], 201);
+        } catch (\Throwable $th) {
+            // Log error and return a JSON response
+            \Log::error('Error adding Tag: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Tag could not be removed successfully',
             ], 500);
         }
     }

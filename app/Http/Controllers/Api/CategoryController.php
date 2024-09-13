@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
+use App\Repositories\CategoryRepositoryInterface;
 use App\Http\Requests\Categories\StoreCategoryRequest;
 use App\Http\Requests\Categories\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
+    private $categoryRepository;
+
+    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -39,32 +48,53 @@ class CategoryController extends Controller
         }
     }
 
+    public function getCategories(Product $product)
+    {
+        return response()->json([
+            'categories' => CategoryResource::collection($product->categories)
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreCategoryRequest $request)
     {
-        {
-            try {
-                Category::create($request->only([
-                    'name',
-                    'slug',
-                ]));
-    
-                return response()->json([
-                    'message' => 'Category ' . $request->input('name') . ' created successfully',
-                ], 201);
-            } catch (\Throwable $th) {
-                // Log error and return a JSON response
-                \Log::error('Error creating Category: ' . $th->getMessage());
-                return response()->json([
-                    'message' => 'Category could not be created successfully',
-                ], 500);
-            }
+        try {
+            Category::create($request->only([
+                'name',
+                'slug',
+            ]));
+
+            return response()->json([
+                'message' => 'Category ' . $request->input('name') . ' created successfully',
+            ], 201);
+        } catch (\Throwable $th) {
+            // Log error and return a JSON response
+            \Log::error('Error creating Category: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Category could not be created successfully',
+            ], 500);
         }
     }
 
-        /**
+    public function attachCategory(Request $request, Product $product, Category $category)
+    {
+        try {
+            $this->categoryRepository->attachCategory($request, $product, $category);
+            return response()->json([
+                'message' => 'Category ' . $category->name . ' added to ' . $product->title . ' successfully',
+            ], 201);
+        } catch (\Throwable $th) {
+            // Log error and return a JSON response
+            \Log::error('Error adding Category: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Category could not be added successfully',
+            ], 500);
+        }
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateCategoryRequest $request, Category $category)
@@ -105,6 +135,22 @@ class CategoryController extends Controller
 
             return response()->json([
                 'message' => 'Category could not be deleted successfully',
+            ], 500);
+        }
+    }
+
+    public function detachCategory(Request $request, Product $product, Category $category)
+    {
+        try {
+            $this->categoryRepository->detachCategory($request, $product, $category);
+            return response()->json([
+                'message' => 'Category ' . $category->name . ' removed from ' . $product->title . ' successfully',
+            ], 201);
+        } catch (\Throwable $th) {
+            // Log error and return a JSON response
+            \Log::error('Error adding Category: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Category could not be removed successfully',
             ], 500);
         }
     }
