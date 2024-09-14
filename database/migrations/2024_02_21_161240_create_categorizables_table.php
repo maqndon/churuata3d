@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('categorizable_id');
             $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamps();
+            $table->unique(['categorizable_type', 'categorizable_id', 'category_id']);
         });
     }
 

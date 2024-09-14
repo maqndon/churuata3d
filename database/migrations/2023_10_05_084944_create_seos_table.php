@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('meta_description');
             $table->json('meta_keywords')->nullable();
             $table->timestamps();
-
             $table->index(['seoable_type', 'seoable_id']);
+            $table->unique(['seoable_type', 'seoable_id']);
         });
     }
 

@@ -18,8 +18,8 @@ return new class extends Migration
             $table->json('images_names');
             $table->string('metadata')->nullable();
             $table->timestamps();
-
             $table->index(['imageable_type', 'imageable_id']);
+            $table->unique(['imageable_type', 'imageable_id']);
         });
     }
 

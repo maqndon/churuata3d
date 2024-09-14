@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('print_setting_product', function (Blueprint $table) {
             $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreignId('print_setting_id')->references('id')->on('print_settings')->onDelete('cascade');
+            $table->unique(['product_id', 'print_setting_id']);
         });
     }
 

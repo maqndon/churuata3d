@@ -18,8 +18,8 @@ return new class extends Migration
             $table->json('files_names');
             $table->string('metadata')->nullable();
             $table->timestamps();
-
             $table->index(['fileable_type', 'fileable_id']);
+            $table->unique(['fileable_type', 'fileable_id']);
         });
     }
 

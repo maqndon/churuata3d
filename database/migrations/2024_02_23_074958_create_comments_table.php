@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('commentable_id');
             $table->text('comment');
             $table->timestamps();
+            $table->unique(['tagable_type', 'tagable_id', 'tag_id']);
         });
     }
 
