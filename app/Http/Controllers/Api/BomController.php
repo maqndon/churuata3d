@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Http\Resources\BomResource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Bom\StoreBomRequest;
+use App\Http\Requests\Bom\UpdateBomRequest;
 
 class BomController extends Controller
 {
@@ -29,6 +30,18 @@ class BomController extends Controller
     public function store(StoreBomRequest $request, Product $product)
     {
         try {
+            $existingBom = Bom::where([
+                'bomable_type' => Product::class,
+                'bomable_id' => $product->id,
+                'item' => $request->input('item'),
+            ])->first();
+
+            if ($existingBom) {
+                return response()->json([
+                    'message' => 'Material ' . $request->item . ' already exists',
+                ], 409);
+            }
+
             $bom = new Bom();
             $bom->bomable_type = Product::class;
             $bom->bomable_id = $product->id;
@@ -48,16 +61,26 @@ class BomController extends Controller
         }
     }
 
-    public function update(Product $product, Bom $bom)
+    public function update(UpdateBomRequest $request, Product $product, Bom $bom)
     {
         try {
-            $product->bill_of_materials()->update([$bom->id]);
+            // Filter the data that has changed
+            $data = array_filter($request->only([
+                'qty',
+                'item',
+            ]), function ($value) {
+                return !is_null($value);
+            });
+
+            // Update the category with the filtered data
+            $bom->update($data);
+
             return response()->json([
-                'message' => 'Bom ' . $bom->name . ' added to ' . $product->title . ' successfully',
+                'message' => 'Material ' . $bom->item . ' added to ' . $product->title . ' successfully',
             ], 201);
         } catch (\Throwable $th) {
             // Log error and return a JSON response
-            \Log::error('Error adding Bill of Material: ' . $th->getMessage());
+            \Log::error('Error adding material: ' . $th->getMessage());
             return response()->json([
                 'message' => 'Material could not be added successfully',
             ], 500);
@@ -73,7 +96,7 @@ class BomController extends Controller
             ], 201);
         } catch (\Throwable $th) {
             // Log error and return a JSON response
-            \Log::error('Error removing Material: ' . $th->getMessage());
+            \Log::error('Error removing material: ' . $th->getMessage());
             return response()->json([
                 'message' => 'Material ' . $bom->item . ' could not be removed successfully',
             ], 500);
