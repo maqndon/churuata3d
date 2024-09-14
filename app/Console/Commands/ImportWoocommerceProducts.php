@@ -168,10 +168,10 @@ class ImportWoocommerceProducts extends Command
                     if (!in_array($item, $dataBom)) {
 
                         if (preg_match('/\((\d+)\)\s*(.*)/', $item, $matches)) {
-                            $dataBom['qty'] = $matches[1];
+                            $dataBom['qty'] = (int) $matches[1];
                             $dataBom['item'] = $matches[2];
                         } else {
-                            $dataBom['qty'] = "1";
+                            $dataBom['qty'] = 1;
                             $dataBom['item'] = $item;
                         }
 

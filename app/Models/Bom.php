@@ -16,8 +16,8 @@ class Bom extends Model
     ];
 
     protected $casts = [
-        'qty' => 'array',
-        'item' => 'array',
+        'qty' => 'integer',
+        'item' => 'string',
     ];
 
     public function bomable(): MorphTo

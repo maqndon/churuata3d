@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('bomable_type', ['App\\\Models\\\Post', 'App\\\Models\\\Product'])->default('App\\\Models\\\Product');
             $table->unsignedBigInteger('bomable_id');
-            $table->json('qty');
-            $table->json('item');
+            $table->integer('qty');
+            $table->string('item');
             $table->timestamps();
         });
     }
