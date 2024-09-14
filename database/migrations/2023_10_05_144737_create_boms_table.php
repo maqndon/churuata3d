@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('qty');
             $table->string('item');
             $table->timestamps();
+            $table->unique(['bomable_type', 'bomable_id', 'item']);
         });
     }
 
