@@ -16,8 +16,9 @@ return new class extends Migration
             $table->enum('commentable_type', ['App\\\Models\\\Post', 'App\\\Models\\\Product'])->default('App\\\Models\\\Product');
             $table->unsignedBigInteger('commentable_id');
             $table->text('comment');
+            $table->string('comment_hash', 40); // i need to be sure that a comment will stored once (assuming a SHA-1 hash)
             $table->timestamps();
-            $table->unique(['tagable_type', 'tagable_id', 'tag_id']);
+            $table->unique(['commentable_type', 'commentable_id', 'comment_hash']);
         });
     }
 
