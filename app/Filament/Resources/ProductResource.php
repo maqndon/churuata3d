@@ -15,9 +15,7 @@ use App\Enums\ProductStatus;
 use App\Models\PrintSetting;
 use App\Models\PrintingMaterial;
 use Filament\Resources\Resource;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Group;
-use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -34,8 +32,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\ProductResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ProductResource\RelationManagers;
+
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ProductResource extends Resource
@@ -77,6 +74,7 @@ class ProductResource extends Resource
                                 }
                                 $set('slug', Str::slug($state));
                             })
+                            ->unique(ignoreRecord: true)
                             ->columnspan('full'),
 
                         TextInput::make('slug')
@@ -87,11 +85,13 @@ class ProductResource extends Resource
                             ->suffixIcon('heroicon-m-globe-alt')
                             ->maxLength(255)
                             // ->disabled()
+                            ->unique(ignoreRecord: true)
                             ->columnSpanFull(),
 
                         TextInput::make('sku')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true),
 
                         Select::make('licence_id')
                             ->label('Licence')
@@ -120,7 +120,8 @@ class ProductResource extends Resource
 
                                 TextInput::make('item')
                                     ->required()
-                                    ->minLength(3),
+                                    ->minLength(3)
+                                    ->unique(ignoreRecord: true),
                             ])
                             ->addActionLabel('Add new item')
                             ->defaultItems(0)
@@ -228,10 +229,12 @@ class ProductResource extends Resource
 
                                 TextInput::make('title')
                                     ->label('SEO Title')
-                                    ->required(),
+                                    ->required()
+                                    ->unique(ignoreRecord: true),
 
                                 Textarea::make('meta_description')
-                                    ->required(),
+                                    ->required()
+                                    ->unique(ignoreRecord: true),
 
                                 TagsInput::make('meta_keywords')
                                     ->placeholder('New meta keyword')
