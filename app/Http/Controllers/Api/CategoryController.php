@@ -29,7 +29,7 @@ class CategoryController extends Controller
             $perPage = $request->input('per_page', 5);
             $categories = new CategoryResource(Category::paginate($perPage));
             return CategoryResource::collection($categories);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'message' => 'No Category found'
             ], 404);
@@ -41,7 +41,7 @@ class CategoryController extends Controller
         try {
             $category = Category::findOrFail($id);
             return new CategoryResource($category);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'message' => 'Category not found'
             ], 404);
@@ -148,7 +148,7 @@ class CategoryController extends Controller
             ], 201);
         } catch (\Throwable $th) {
             // Log error and return a JSON response
-            \Log::error('Error adding Category: ' . $th->getMessage());
+            \Log::error('Error removing Category: ' . $th->getMessage());
             return response()->json([
                 'message' => 'Category could not be removed successfully',
             ], 500);

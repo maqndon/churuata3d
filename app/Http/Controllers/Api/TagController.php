@@ -29,7 +29,7 @@ class TagController extends Controller
             $perPage = $request->input('per_page', 5);
             $tags = new TagResource(Tag::paginate($perPage));
             return TagResource::collection($tags);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'message' => 'No Tag found'
             ], 404);
@@ -41,7 +41,7 @@ class TagController extends Controller
         try {
             $tag = Tag::findOrFail($id);
             return new TagResource($tag);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'message' => 'Tag not found'
             ], 404);
@@ -148,7 +148,7 @@ class TagController extends Controller
             ], 201);
         } catch (\Throwable $th) {
             // Log error and return a JSON response
-            \Log::error('Error adding Tag: ' . $th->getMessage());
+            \Log::error('Error removing Tag: ' . $th->getMessage());
             return response()->json([
                 'message' => 'Tag could not be removed successfully',
             ], 500);

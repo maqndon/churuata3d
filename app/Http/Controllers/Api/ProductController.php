@@ -22,7 +22,7 @@ class ProductController extends Controller
             # load default relationships from Scope's Product Model
             $products = Product::withDefaultRelationships()->paginate($perPage);
             return ProductResource::collection($products);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'message' => 'No products found'
             ], 404);
@@ -34,7 +34,6 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-
         try {
             Product::create($request->only([
                 'created_by',
@@ -78,7 +77,7 @@ class ProductController extends Controller
         try {
             $product = Product::withDefaultRelationships()->findOrFail($id);
             return new ProductResource($product);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return response()->json([
                 'message' => 'Product not found'
             ], 404);
