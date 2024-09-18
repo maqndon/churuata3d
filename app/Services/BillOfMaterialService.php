@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Bom;
+use App\Models\Product;
 
 class BillOfMaterialService
 {
@@ -12,5 +13,41 @@ class BillOfMaterialService
             ->where('bomable_type', $type)
             ->get();
         return $bom;
+    }
+
+
+    public function createBom(array $data, Product $product)
+    {
+        $existingBom = Bom::where([
+            'bomable_type' => Product::class,
+            'bomable_id' => $product->id,
+            'item' => $data['item'],
+        ])->first();
+
+        if ($existingBom) {
+            throw new \Exception('Material ' . $data['item'] . ' already exists');
+        }
+
+        $bom = new Bom();
+        $bom->bomable_type = Product::class;
+        $bom->bomable_id = $product->id;
+        $bom->qty = $data['qty'];
+        $bom->item = $data['item'];
+        $bom->save();
+
+        return $bom;
+    }
+
+    public function updateBom(array $data, Bom $bom)
+    {
+        $bom->update($data);
+        return $bom;
+    }
+
+
+    public function deleteBom(Bom $bom)
+    {
+        $bom->delete();
+        return true;
     }
 }

@@ -24,18 +24,19 @@ class UpdateCategoryRequest extends FormRequest
     {
         # update HTTP method used
         $method = $this->method();
+        $categoryId = $this->route('category')->id;
 
         if ($method == 'PUT') {
             return [
                 'name' => [
                     'required',
                     'string',
-                    Rule::unique('categories', 'name')->ignore($this->input('name'), 'name')
+                    Rule::unique('categories', 'name')->ignore($categoryId, 'id')
                 ],
                 'slug' => [
                     'required',
                     'max:255',
-                    Rule::unique('categories', 'slug')->ignore($this->input('slug'), 'slug'),
+                    Rule::unique('categories', 'slug')->ignore($categoryId, 'id')
                 ]
             ];
         } else {
@@ -44,13 +45,13 @@ class UpdateCategoryRequest extends FormRequest
                     'sometimes',
                     'required',
                     'string',
-                    Rule::unique('categories', 'name')->ignore($this->input('name'), 'name')
+                    Rule::unique('categories', 'name')->ignore($categoryId, 'id')
                 ],
                 'slug' => [
                     'sometimes',
                     'required',
                     'max:255',
-                    Rule::unique('categories', 'slug')->ignore($this->input('slug'), 'slug'),
+                    Rule::unique('categories', 'slug')->ignore($categoryId, 'id')
                 ]
             ];
         }

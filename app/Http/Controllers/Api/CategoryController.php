@@ -5,43 +5,42 @@ namespace App\Http\Controllers\Api;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
-use App\Repositories\CategoryRepositoryInterface;
 use App\Http\Requests\Categories\StoreCategoryRequest;
 use App\Http\Requests\Categories\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
-    private $categoryRepository;
+    private $categoryService;
 
-    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    public function __construct(CategoryService $categoryService)
     {
-        $this->categoryRepository = $categoryRepository;
+        $this->categoryService = $categoryService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         try {
             $perPage = $request->input('per_page', 5);
             $categories = new CategoryResource(Category::paginate($perPage));
+
             return CategoryResource::collection($categories);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+
             return response()->json([
                 'message' => 'No Category found'
             ], 404);
         }
     }
 
-    public function show(string $id)
+    public function show(Category $category)
     {
         try {
-            $category = Category::findOrFail($id);
             return new CategoryResource($category);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+
             return response()->json([
                 'message' => 'Category not found'
             ], 404);
@@ -55,23 +54,17 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreCategoryRequest $request)
     {
         try {
-            Category::create($request->only([
-                'name',
-                'slug',
-            ]));
+            $this->categoryService->storeCategory($request->all());
 
             return response()->json([
                 'message' => 'Category ' . $request->input('name') . ' created successfully',
             ], 201);
         } catch (\Throwable $th) {
-            // Log error and return a JSON response
-            \Log::error('Error creating Category: ' . $th->getMessage());
+            \Log::error('Error creating category: ' . $th->getMessage());
+
             return response()->json([
                 'message' => 'Category could not be created successfully',
             ], 500);
@@ -81,35 +74,24 @@ class CategoryController extends Controller
     public function attachCategory(Request $request, Product $product, Category $category)
     {
         try {
-            $this->categoryRepository->attachCategory($request, $product, $category);
+            $this->categoryService->attachCategory($product, $category);
+
             return response()->json([
                 'message' => 'Category ' . $category->name . ' added to ' . $product->title . ' successfully',
             ], 201);
         } catch (\Throwable $th) {
-            // Log error and return a JSON response
-            \Log::error('Error adding Category: ' . $th->getMessage());
+            \Log::error('Error attaching category: ' . $th->getMessage());
+
             return response()->json([
-                'message' => 'Category could not be added successfully',
+                'message' => 'Category could not be attached successfully',
             ], 500);
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         try {
-            // Filter the data that has changed
-            $data = array_filter($request->only([
-                'name',
-                'slug',
-            ]), function ($value) {
-                return !is_null($value);
-            });
-
-            // Update the category with the filtered data
-            $category->update($data);
+            $this->categoryService->updateCategory($category, $request->all());
 
             return response()->json([
                 'message' => 'Category ' . $category->name . ' updated successfully',
@@ -126,7 +108,8 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         try {
-            $category->delete();
+            $this->categoryService->destroyCategory($category);
+
             return response()->json([
                 'message' => 'Category ' . $category->name . ' deleted successfully',
             ], 200);
@@ -139,16 +122,17 @@ class CategoryController extends Controller
         }
     }
 
-    public function detachCategory(Request $request, Product $product, Category $category)
+    public function detachCategory(Product $product, Category $category)
     {
         try {
-            $this->categoryRepository->detachCategory($request, $product, $category);
+            $this->categoryService->detachCategory($product, $category);
+
             return response()->json([
                 'message' => 'Category ' . $category->name . ' removed from ' . $product->title . ' successfully',
             ], 201);
         } catch (\Throwable $th) {
-            // Log error and return a JSON response
-            \Log::error('Error removing Category: ' . $th->getMessage());
+            \Log::error('Error removing category: ' . $th->getMessage());
+
             return response()->json([
                 'message' => 'Category could not be removed successfully',
             ], 500);

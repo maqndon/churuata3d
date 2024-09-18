@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Http\Requests\Products\StoreProductRequest;
@@ -11,51 +12,44 @@ use App\Http\Requests\Products\UpdateProductRequest;
 
 class ProductController extends Controller
 {
+    private $productService;
 
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index(Request $request)
     {
         try {
             $perPage = $request->input('per_page', 5);
-            # load default relationships from Scope's Product Model
-            $products = Product::withDefaultRelationships()->paginate($perPage);
+            $products = new ProductResource(Product::paginate($perPage));
+
             return ProductResource::collection($products);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+
             return response()->json([
                 'message' => 'No products found'
             ], 404);
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function show(Product $product)
+    {
+        try {
+            return new ProductResource($product);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+
+            return response()->json([
+                'message' => 'Product not found'
+            ], 404);
+        }
+    }
+
     public function store(StoreProductRequest $request)
     {
         try {
-            Product::create($request->only([
-                'created_by',
-                'licence_id',
-                'title',
-                'slug',
-                'sku',
-                'excerpt',
-                'body',
-                'stock',
-                'price',
-                'sale_price',
-                'status',
-                'is_featured',
-                'is_downloadable',
-                'is_free',
-                'is_printable',
-                'is_parametric',
-                'related_parametric',
-                'downloads',
-                'created_at'
-            ]));
+            $this->productService->storeProduct($request->all());
 
             return response()->json([
                 'message' => 'Product ' . $request->title . ' created successfully',
@@ -69,53 +63,10 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        try {
-            $product = Product::withDefaultRelationships()->findOrFail($id);
-            return new ProductResource($product);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
-            return response()->json([
-                'message' => 'Product not found'
-            ], 404);
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateProductRequest $request, Product $product)
     {
         try {
-            // Filter the data that has changed
-            $data = array_filter($request->only([
-                'created_by',
-                'licence_id',
-                'title',
-                'slug',
-                'sku',
-                'excerpt',
-                'body',
-                'stock',
-                'price',
-                'sale_price',
-                'status',
-                'is_featured',
-                'is_downloadable',
-                'is_free',
-                'is_printable',
-                'is_parametric',
-                'related_parametric',
-                'downloads'
-            ]), function ($value) {
-                return !is_null($value);
-            });
-
-            // Update the product with the filtered data
-            $product->update($data);
+            $product = $this->productService->updateProduct($product, $request->all());
 
             return response()->json([
                 'message' => 'Product ' . $request->title . ' updated successfully',
@@ -129,13 +80,11 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Product $product)
     {
         try {
-            $product->delete();
+            $this->productService->destroyProduct($product);
+
             return response()->json([
                 'message' => 'Product ' . $product->title . ' deleted successfully',
             ], 200);

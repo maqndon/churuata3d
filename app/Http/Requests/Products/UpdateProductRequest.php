@@ -24,6 +24,7 @@ class UpdateProductRequest extends FormRequest
     {
         # update HTTP method used
         $method = $this->method();
+        $productId = $this->route('product')->id;
 
         if ($method == 'PUT') {
             return [
@@ -32,18 +33,18 @@ class UpdateProductRequest extends FormRequest
                 'title' => [
                     'required',
                     'max:255',
-                    Rule::unique('products', 'title')->ignore($this->input('title'), 'id'),
+                    Rule::unique('products', 'title')->ignore($productId, 'id')
                 ],
                 'slug' => [
                     'required',
                     'alpha_dash',
                     'max:255',
-                    Rule::unique('products', 'slug')->ignore($this->input('slug'), 'slug'),
+                    Rule::unique('products', 'slug')->ignore($productId, 'id')
                 ],
                 'sku' => [
                     'required',
                     'max:255',
-                    Rule::unique('products', 'sku')->ignore($this->input('sku'), 'sku'),
+                    Rule::unique('products', 'sku')->ignore($productId, 'id')
                 ],
                 'excerpt' => 'required|string',
                 'body' => 'required|string',
@@ -67,19 +68,19 @@ class UpdateProductRequest extends FormRequest
                     'sometimes',
                     'required',
                     'max:255',
-                    Rule::unique('products', 'title')->ignore($this->input('title'), 'title'),
+                    Rule::unique('products', 'title')->ignore($productId, 'id')
                 ],
                 'slug' => [
                     'sometimes',
                     'required',
                     'max:255',
-                    Rule::unique('products', 'slug')->ignore($this->input('slug'), 'slug'),
+                    Rule::unique('products', 'slug')->ignore($productId, 'id')
                 ],
                 'sku' => [
                     'sometimes',
                     'required',
                     'max:255',
-                    Rule::unique('products', 'sku')->ignore($this->input('sku'), 'sku'),
+                    Rule::unique('products', 'sku')->ignore($productId, 'id')
                 ],
                 'excerpt' => 'sometimes|required|string',
                 'body' => 'sometimes|required|string',

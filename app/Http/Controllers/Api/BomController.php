@@ -8,9 +8,17 @@ use App\Http\Resources\BomResource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Bom\StoreBomRequest;
 use App\Http\Requests\Bom\UpdateBomRequest;
+use App\Services\BillOfMaterialService;
 
 class BomController extends Controller
 {
+    private $bomService;
+
+    public function __construct(BillOfMaterialService $bomService)
+    {
+        $this->bomService = $bomService;
+    }
+
     public function show(Product $product)
     {
         try {
@@ -19,41 +27,25 @@ class BomController extends Controller
             return response()->json([
                 'boms' => $bill_of_materials
             ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+        } catch (\Throwable $th) {
+            \Log::error('There is no material stored with this ID: ' . $th->getMessage());
 
             return response()->json([
-                'message' => 'An error occurred'
-            ], 404);
+                'message' => 'Material could not be found',
+            ], 500);
         }
     }
 
     public function store(StoreBomRequest $request, Product $product)
     {
         try {
-            $existingBom = Bom::where([
-                'bomable_type' => Product::class,
-                'bomable_id' => $product->id,
-                'item' => $request->input('item'),
-            ])->first();
-
-            if ($existingBom) {
-                return response()->json([
-                    'message' => 'Material ' . $request->item . ' already exists',
-                ], 409);
-            }
-
-            $bom = new Bom();
-            $bom->bomable_type = Product::class;
-            $bom->bomable_id = $product->id;
-            $bom->qty = $request->input('qty');
-            $bom->item = $request->input('item');
-            $bom->save();
+            $this->bomService->createBom($request->all(), $product);
 
             return response()->json([
                 'message' => 'Material ' . $request->item . ' created successfully',
             ], 201);
         } catch (\Throwable $th) {
-            \Log::error('Error adding material: ' . $th->getMessage());
+            \Log::error('Error creating material: ' . $th->getMessage());
 
             return response()->json([
                 'message' => 'Material could not be created successfully',
@@ -64,25 +56,16 @@ class BomController extends Controller
     public function update(UpdateBomRequest $request, Product $product, Bom $bom)
     {
         try {
-            // Filter the data that has changed
-            $data = array_filter($request->only([
-                'qty',
-                'item',
-            ]), function ($value) {
-                return !is_null($value);
-            });
-
-            // Update the category with the filtered data
-            $bom->update($data);
+            $this->bomService->updateBom($request->all(), $bom);
 
             return response()->json([
                 'message' => 'Material ' . $bom->item . ' added to ' . $product->title . ' successfully',
-            ], 201);
+            ], 200);
         } catch (\Throwable $th) {
-            // Log error and return a JSON response
-            \Log::error('Error adding material: ' . $th->getMessage());
+            \Log::error('Error updating material: ' . $th->getMessage());
+
             return response()->json([
-                'message' => 'Material could not be added successfully',
+                'message' => 'Material could not be updated successfully',
             ], 500);
         }
     }
@@ -90,15 +73,16 @@ class BomController extends Controller
     public function destroy(Product $product, Bom $bom)
     {
         try {
-            $product->bill_of_materials()->find($bom->id)->delete();
+            $this->bomService->deleteBom($bom);
+
             return response()->json([
-                'message' => 'Material ' . $bom->item . ' removed from ' . $product->title . ' successfully',
-            ], 201);
+                'message' => 'Material ' . $bom->item . ' deleted from ' . $product->title . ' successfully',
+            ], 200);
         } catch (\Throwable $th) {
-            // Log error and return a JSON response
-            \Log::error('Error removing material: ' . $th->getMessage());
+            \Log::error('Error deleting material: ' . $th->getMessage());
+
             return response()->json([
-                'message' => 'Material ' . $bom->item . ' could not be removed successfully',
+                'message' => 'Material could not be deleted successfully',
             ], 500);
         }
     }

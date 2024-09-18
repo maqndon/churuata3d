@@ -18,6 +18,7 @@ return new class extends Migration
             $table->tinyInteger('min_hot_bed_temp')->unsigned();
             $table->tinyInteger('max_hot_bed_temp')->unsigned();
             $table->timestamps();
+            $table->unique(['name', 'nozzle_size']);
         });
     }
 

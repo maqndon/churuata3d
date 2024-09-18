@@ -24,18 +24,19 @@ class UpdateTagRequest extends FormRequest
     {
         # update HTTP method used
         $method = $this->method();
+        $tagId = $this->route('tag');
 
         if ($method == 'PUT') {
             return [
                 'name' => [
                     'required',
                     'string',
-                    Rule::unique('tags', 'name')->ignore($this->input('name'), 'name')
+                    Rule::unique('tags', 'name')->ignore($tagId, 'id')
                 ],
                 'slug' => [
                     'required',
                     'max:255',
-                    Rule::unique('tags', 'slug')->ignore($this->input('slug'), 'slug'),
+                    Rule::unique('tags', 'slug')->ignore($tagId, 'id')
                 ]
             ];
         } else {
@@ -44,13 +45,13 @@ class UpdateTagRequest extends FormRequest
                     'sometimes',
                     'required',
                     'string',
-                    Rule::unique('tags', 'name')->ignore($this->input('name'), 'name')
+                    Rule::unique('tags', 'name')->ignore($tagId, 'id')
                 ],
                 'slug' => [
                     'sometimes',
                     'required',
                     'max:255',
-                    Rule::unique('tags', 'slug')->ignore($this->input('slug'), 'slug'),
+                    Rule::unique('tags', 'slug')->ignore($tagId, 'id')
                 ]
             ];
         }

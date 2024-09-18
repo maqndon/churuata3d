@@ -24,6 +24,7 @@ class UpdateBomRequest extends FormRequest
     {
         # update HTTP method used
         $method = $this->method();
+        $bomId = $this->route('bom')->id;
 
         if ($method == 'PUT') {
             return [
@@ -31,7 +32,7 @@ class UpdateBomRequest extends FormRequest
                 'item' => [
                     'required',
                     'string',
-                    Rule::unique('boms', 'item')->ignore($this->input('item'), 'item')
+                    Rule::unique('boms', 'item')->ignore($bomId, 'id')
                 ],
             ];
         } else {
@@ -41,7 +42,7 @@ class UpdateBomRequest extends FormRequest
                     'sometimes',
                     'required',
                     'string',
-                    Rule::unique('boms', 'item')->ignore($this->input('item'), 'item')
+                    Rule::unique('boms', 'item')->ignore($bomId, 'id')
                 ],
             ];
         }
