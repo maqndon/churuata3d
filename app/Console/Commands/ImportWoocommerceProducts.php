@@ -129,7 +129,19 @@ class ImportWoocommerceProducts extends Command
                 }
 
                 if ($metaKey === 'product_image_gallery') {
-                    $images = preg_split('/\s*,\s*/', $metaValue);
+                    if (!empty(trim($metaValue))) {
+                        $images = preg_split('/\s*,\s*/', $metaValue);
+                        $images = array_filter($images);
+                        $dir = "product-images".DIRECTORY_SEPARATOR;
+                        $imagesArray = [];
+
+                        foreach ($images as $image) {
+                            $imagesArray[] = $dir.$newProduct->title.DIRECTORY_SEPARATOR.$image;
+                        }
+
+                    } else {
+                        $imagesArray = ["default-images".DIRECTORY_SEPARATOR."product_no-image.svg"];
+                    }
                 }
             }
 
@@ -245,22 +257,10 @@ class ImportWoocommerceProducts extends Command
                 'meta_keywords' => $metaKeywords != null ? $metaKeywords : '',
             ]);
 
-            // Handle product images
-            if ($images) {
+            $newProduct->images()->create([
+                'images_names' => $imagesArray
+            ]);
 
-                $dir = "product-images\\";
-
-                $imagesArray = [];
-
-                foreach ($images as $image) {
-                    $imagesArray[] = $dir.$newProduct->title.DIRECTORY_SEPARATOR.$image;
-                }
-                
-                $newProduct->images()->create([
-                    'images_names' => $imagesArray
-                ]);
-
-            }
         }
 
         $this->info('Import completed.');

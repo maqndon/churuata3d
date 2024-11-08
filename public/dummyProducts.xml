@@ -57,7 +57,7 @@
         </postmeta>
         <postmeta>
             <meta_key>product_image_gallery</meta_key>
-            <meta_value>product1-image1.jpg,product1-image2.jpg</meta_value>
+            <meta_value></meta_value>
         </postmeta>
         <postmeta>
             <meta_key>stock</meta_key>
@@ -149,7 +149,7 @@
         </postmeta>
         <postmeta>
             <meta_key>product_image_gallery</meta_key>
-            <meta_value>product2-image1.jpg,product2-image2.jpg</meta_value>
+            <meta_value></meta_value>
         </postmeta>
         <postmeta>
             <meta_key>stock</meta_key>
@@ -241,7 +241,7 @@
         </postmeta>
         <postmeta>
             <meta_key>product_image_gallery</meta_key>
-            <meta_value>product3-image1.jpg,product3-image2.jpg</meta_value>
+            <meta_value></meta_value>
         </postmeta>
         <postmeta>
             <meta_key>stock</meta_key>
