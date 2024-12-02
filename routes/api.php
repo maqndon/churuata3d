@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\BomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,10 @@ Route::apiResource('categories',  CategoryController::class)
 
 Route::apiResource('tags',  TagController::class)
     ->middleware('auth:sanctum');
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('products/{product}/bom', [BomController::class, 'show']);
+    Route::post('products/{product}/bom', [BomController::class, 'store']);
+    Route::put('products/{product}/bom/{bom}', [BomController::class, 'update']);
+    Route::delete('products/{product}/bom/{bom}', [BomController::class, 'destroy']);
+});

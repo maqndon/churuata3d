@@ -22,7 +22,7 @@ class BomController extends Controller
     public function show(Product $product)
     {
         try {
-            $bill_of_materials = BomResource::collection($product->bill_of_materials);
+            $bill_of_materials = $this->bomService->getBillOfMaterials(Product::class, $product->id);
 
             return response()->json([
                 'boms' => $bill_of_materials

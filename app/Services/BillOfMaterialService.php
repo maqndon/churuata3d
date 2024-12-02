@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Bom;
 use App\Models\Product;
+use App\Http\Resources\BomResource;
 
 class BillOfMaterialService
 {
@@ -12,9 +13,9 @@ class BillOfMaterialService
         $bom = Bom::where('bomable_id', $id)
             ->where('bomable_type', $type)
             ->get();
-        return $bom;
+            
+            return BomResource::collection($bom);
     }
-
 
     public function createBom(array $data, Product $product)
     {
